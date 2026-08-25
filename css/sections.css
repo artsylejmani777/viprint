@@ -787,6 +787,12 @@
   border: 1px solid var(--brand-tint);
 }
 .form__status.is-shown { display: block; }
+.form__status--err {
+  background: #FFF3F3;
+  color: #A31414;
+  border-color: rgba(210, 34, 34, 0.28);
+}
+.form button[type="submit"][disabled] { opacity: 0.62; cursor: progress; transform: none; box-shadow: none; }
 
 /* ============================ CTA band ============================ */
 

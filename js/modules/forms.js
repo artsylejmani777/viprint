@@ -1,5 +1,10 @@
 /* ============================================================
    ViPrint — Formulari i kontaktit + lightbox video
+
+   Formulari punon në dy mënyra:
+     A) Formspree (dërgim i vërtetë me AJAX) — kur VP.config.formspreeId është plotësuar
+     B) mailto (fallback) — hap klientin e emailit të vizitorit
+   Shih data/config.js
    ============================================================ */
 (function () {
   'use strict';
@@ -10,9 +15,38 @@
     var form = document.querySelector('[data-contact-form]');
     if (!form) return;
 
-    var status = form.querySelector('[data-form-status]');
+    var cfg      = VP.config || {};
+    var formId   = (cfg.formspreeId || '').trim();
+    var mailTo   = cfg.fallbackEmail || (VP.company && VP.company.contact.email) || 'info@vi-print.com';
+    var status   = form.querySelector('[data-form-status]');
+    var noteEl   = form.querySelector('[data-form-note]');
+    var submitEl = form.querySelector('button[type="submit"]');
+    var submitTxt = submitEl ? submitEl.innerHTML : '';
+
+    /* Shënimi nën butonin — i saktë për mënyrën aktive */
+    if (noteEl) {
+      noteEl.innerHTML = formId
+        ? 'Mesazhi dërgohet drejtpërdrejt në <strong>' + VP.esc(mailTo) + '</strong>. ' +
+          'Përgjigjemi brenda një dite pune.'
+        : 'Formulari hap klientin tuaj të emailit me të dhënat e plotësuara drejtuar ' +
+          '<strong>' + VP.esc(mailTo) + '</strong>. Për dërgim automatik, plotësoni ' +
+          '<code>formspreeId</code> në <code>data/config.js</code> — udhëzimet janë brenda skedarit.';
+    }
 
     function fieldOf(input) { return input.closest('.field'); }
+
+    function say(msg, isErr) {
+      if (!status) return;
+      status.innerHTML = msg;
+      status.classList.toggle('form__status--err', !!isErr);
+      status.classList.add('is-shown');
+    }
+
+    function busy(on) {
+      if (!submitEl) return;
+      submitEl.disabled = on;
+      submitEl.innerHTML = on ? 'Duke dërguar…' : submitTxt;
+    }
 
     function validate() {
       var ok = true;
@@ -32,39 +66,80 @@
       }
     });
 
+    function payload() {
+      var d = new FormData(form);
+      return {
+        name:    (d.get('name')    || '').toString().trim(),
+        email:   (d.get('email')   || '').toString().trim(),
+        phone:   (d.get('phone')   || '').toString().trim(),
+        subject: (d.get('subject') || 'Kërkesë për ofertë').toString().trim(),
+        message: (d.get('message') || '').toString().trim(),
+        _gotcha: (d.get('_gotcha') || '').toString()   // kurth anti-spam
+      };
+    }
+
+    /* ---- B) Fallback: mailto ---- */
+    function sendViaMailto(p) {
+      var body = [
+        'Emri: ' + p.name,
+        'Email: ' + p.email,
+        p.phone ? 'Telefoni: ' + p.phone : null,
+        'Shërbimi: ' + p.subject,
+        '',
+        p.message
+      ].filter(Boolean).join('\n');
+
+      window.location.href = 'mailto:' + mailTo +
+        '?subject=' + encodeURIComponent('[Web] ' + p.subject + ' — ' + p.name) +
+        '&body=' + encodeURIComponent(body);
+
+      say('Faleminderit, ' + VP.esc(p.name.split(' ')[0] || '') +
+          '! Po hapet klienti i emailit me mesazhin tuaj. Nëse nuk hapet, shkruajini në <strong>' +
+          VP.esc(mailTo) + '</strong>.');
+    }
+
+    /* ---- A) Formspree ---- */
+    function sendViaFormspree(p) {
+      busy(true);
+      if (status) status.classList.remove('is-shown');
+
+      fetch('https://formspree.io/f/' + encodeURIComponent(formId), {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(p)
+      })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; })
+            .then(function (json) { return { ok: res.ok, json: json }; });
+        })
+        .then(function (r) {
+          busy(false);
+          if (r.ok) {
+            form.reset();
+            say('Faleminderit, ' + VP.esc(p.name.split(' ')[0] || '') +
+                '! Mesazhi u dërgua me sukses. Do t\'ju kontaktojmë së shpejti.');
+            return;
+          }
+          var msg = (r.json && r.json.errors && r.json.errors.length)
+            ? r.json.errors.map(function (e) { return VP.esc(e.message); }).join(' ')
+            : 'Dërgimi nuk u realizua.';
+          say(msg + ' Provoni përsëri, ose shkruajini drejtpërdrejt në <strong>' +
+              VP.esc(mailTo) + '</strong>.', true);
+        })
+        .catch(function () {
+          busy(false);
+          say('Nuk arritëm të lidhemi me serverin. Kontrolloni internetin, ose shkruajini në <strong>' +
+              VP.esc(mailTo) + '</strong>.', true);
+        });
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!validate()) return;
-
-      var d = new FormData(form);
-      var name    = (d.get('name')    || '').toString().trim();
-      var email   = (d.get('email')   || '').toString().trim();
-      var phone   = (d.get('phone')   || '').toString().trim();
-      var subject = (d.get('subject') || 'Kërkesë për ofertë').toString().trim();
-      var message = (d.get('message') || '').toString().trim();
-
-      // Nuk ka backend: hapim klientin e emailit me të dhënat e plotësuara.
-      var body = [
-        'Emri: ' + name,
-        'Email: ' + email,
-        phone ? 'Telefoni: ' + phone : null,
-        'Shërbimi: ' + subject,
-        '',
-        message
-      ].filter(Boolean).join('\n');
-
-      var href = 'mailto:' + VP.company.contact.email +
-                 '?subject=' + encodeURIComponent('[Web] ' + subject + ' — ' + name) +
-                 '&body=' + encodeURIComponent(body);
-
-      window.location.href = href;
-
-      if (status) {
-        status.textContent = 'Faleminderit, ' + (name.split(' ')[0] || '') +
-          '! Po hapet klienti i emailit me mesazhin tuaj drejtuar ' + VP.company.contact.email +
-          '. Nëse nuk hapet, shkruajini drejtpërdrejt në ' + VP.company.contact.email + '.';
-        status.classList.add('is-shown');
-      }
+      var p = payload();
+      if (p._gotcha) return;                 // bot
+      if (formId) sendViaFormspree(p);
+      else        sendViaMailto(p);
     });
   };
 

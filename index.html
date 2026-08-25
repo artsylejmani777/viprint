@@ -473,17 +473,18 @@
 
         <div class="form__status" data-form-status role="status"></div>
 
+        <!-- Kurth anti-spam: botët e plotësojnë, njerëzit nuk e shohin -->
+        <div style="position:absolute;left:-9999px" aria-hidden="true">
+          <label for="f-gotcha">Lëre bosh</label>
+          <input id="f-gotcha" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
         <button class="btn btn--brand btn--block" type="submit">
           Dërgo mesazhin
           <svg class="btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
 
-        <p class="form__note">
-          Kjo faqe është statike (pa server), pra formulari hap klientin tuaj të emailit me
-          të dhënat e plotësuara drejtuar <strong>info@vi-print.com</strong>.
-          Për dërgim automatik, lidhni një shërbim si Formspree ose një endpoint të vetin —
-          udhëzimet janë në <code>README.md</code>.
-        </p>
+        <p class="form__note" data-form-note></p>
       </form>
     </div>
   </div>
@@ -577,6 +578,7 @@
 
 <!-- ══════════════════════════ SCRIPTS ══════════════════════════ -->
 <!-- 1) Të dhënat (nga faqja zyrtare vi-print.com) -->
+<script src="data/config.js"></script>
 <script src="data/company.js"></script>
 <script src="data/services.js"></script>
 <script src="data/products.js"></script>

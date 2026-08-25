@@ -69,6 +69,7 @@ viprint/
 │     ├─ process.js        # udhëtimi nëpër fabrikë
 │     └─ forms.js          # validimi i formularit + lightbox video
 ├─ data/                   # ← E GJITHË PËRMBAJTJA JETON KËTU
+│  ├─ config.js            # formspreeId — i vetmi vend për t'u konfiguruar
 │  ├─ company.js           # kontakt, brendet, arsyet, referencat, videot
 │  ├─ services.js          # 7 shërbime + 6 hapat e procesit
 │  ├─ products.js          # 64 produkte reale
@@ -122,19 +123,35 @@ të dy versioneve `+383 48 350 159`. Është përdorur i dyti.
 
 ---
 
-## Formulari i kontaktit
+## Formulari i kontaktit — aktivizimi i dërgimit real
 
-Faqja është statike, pra formulari **hap klientin e emailit** me të dhënat e plotësuara
-drejtuar `info@vi-print.com`. Për dërgim automatik, zgjidh një nga këto:
+Formspree është **i integruar dhe gati**. Mungon vetëm një ID.
 
-**Formspree** (më i shpejti, pa server):
-```html
-<!-- index.html -->
-<form class="form" data-contact-form action="https://formspree.io/f/KODI_JUAJ" method="POST">
+### Hapat (falas, ~1 minutë)
+
+1. Hyr në **https://formspree.io** → *Sign up* (me `info@vi-print.com`).
+2. **+ New Form** → emri `ViPrint Website` → *Create*.
+3. Kopjo endpoint-in, p.sh. `https://formspree.io/f/xldwpbkq`.
+4. Hap **`data/config.js`** dhe ngjit **vetëm kodin e fundit**:
+
+```js
+formspreeId: 'xldwpbkq',     //  ← e vetmja gjë që duhet ndryshuar
 ```
-dhe në `js/modules/forms.js` hiqe `e.preventDefault()` pasi kalon validimi.
 
-Alternativa: Netlify Forms (`netlify` attribute), Web3Forms, ose një endpoint i vetin.
+Gati. Formulari tani dërgon email të vërtetë në `info@vi-print.com`.
+
+### Si sillet
+
+| `formspreeId` | Sjellja |
+|---|---|
+| i plotësuar | POST me AJAX në Formspree — pa reload, butoni shfaq *"Duke dërguar…"*, mesazh suksesi, formulari pastrohet |
+| bosh (gjendja aktuale) | Fallback `mailto:` — hap klientin e emailit të vizitorit me fushat e plotësuara |
+
+Të dyja rrugët janë testuar. Përfshihen: trajtimi i gabimeve (shfaq mesazhin e Formspree +
+emailin si alternativë), gjendja *disabled* e butonit, dhe një **kurth anti-spam** (`_gotcha`)
+që bllokon botët pa CAPTCHA.
+
+Alternativa: Netlify Forms (shto atributin `netlify` te `<form>`), Web3Forms, ose endpoint i vetin.
 
 ---
 

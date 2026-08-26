@@ -260,6 +260,8 @@ img, svg { display: block; max-width: 100%; }
 .ord.is-locked:hover { transform: none; border-color: var(--line); box-shadow: none; }
 
 .ord__top { display: flex; align-items: center; justify-content: space-between; }
+.ord__icon { font-size: 1.5rem; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,.3)); }
+.ord__en { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-mut); font-weight: 600; }
 .ord__n { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .18em; color: var(--text-mut); }
 .ord__lock, .ord__best, .ord__new {
   font-size: .62rem; letter-spacing: .14em; font-weight: 700; padding: .18rem .5rem; border-radius: 999px;
@@ -987,9 +989,21 @@ img, svg { display: block; max-width: 100%; }
   position: relative;
   width: 62%;
   aspect-ratio: 1.18 / 1;
+  flex: 0 0 auto;
   transform-style: preserve-3d;
   transition: opacity .4s var(--e), transform .4s var(--e);
 }
+
+/* Përmasat reale sipas llojit të produktit */
+.pv[data-type="card"] .sheet { width: 58%; aspect-ratio: 1.586 / 1; }   /* vizitkartë 85×55 */
+.pv[data-type="card"] .sheet__flap { display: none; }
+.pv[data-type="flyer"] .sheet { width: 46%; aspect-ratio: 0.707 / 1; }   /* A5 */
+.pv[data-type="label"] .sheet { width: 44%; aspect-ratio: 1 / 1; }
+.pv[data-type="label"] .face { border-radius: 18px; }
+.pv[data-type="label"] .sheet__flap { display: none; }
+.pv[data-type="promo"] .sheet { width: 58%; aspect-ratio: 1.414 / 1; }   /* landscape */
+.pv[data-type="promo"] .sheet__flap { display: none; }
+.pv[data-type="bag"] .sheet { width: 46%; aspect-ratio: 0.82 / 1; }
 
 /* flapët e netit */
 .sheet__flap {
@@ -1111,8 +1125,7 @@ img, svg { display: block; max-width: 100%; }
 .art__it--logo .mark b { font-weight: 800; }
 .art__it--logo .mark em { font-style: normal; font-weight: 400; opacity: .9; }
 .art__it--name .nm { font-weight: 700; letter-spacing: -.01em; font-size: .92em; text-align: center; white-space: nowrap; }
-.art__it--barcode .bc { display: flex; gap: 1px; align-items: stretch; height: 1.4em; justify-content: center; }
-.art__it--barcode .bc i { background: currentColor; }
+.art__it--smalltext { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .art__it--smalltext .st { font-size: .62em; letter-spacing: .06em; white-space: nowrap; }
 
 /* ---------- GHOST SLOTS (artwork stage) ---------- */
@@ -1398,6 +1411,45 @@ img, svg { display: block; max-width: 100%; }
 .fb__topart { position: absolute; inset: 0; }
 .fb__topart .art__it { transform: translate(-50%, -50%) scale(.6); }
 .fb__topart .art__it--smalltext { opacity: .9; }
+
+/* ============================================================
+   QESJA E LETRËS (bag)
+   ============================================================ */
+
+.paperbag {
+  position: absolute; inset: 0;
+  display: none;
+  transform-style: preserve-3d;
+}
+.pv[data-type="bag"].is-folded .paperbag { display: block; animation: boxAppear .8s var(--e); }
+.pv[data-type="bag"].is-folded .sheet { opacity: 0; }
+
+.paperbag__body {
+  position: absolute; left: 50%; top: 34%; bottom: 14%;
+  width: 42%;
+  transform: translateX(-50%);
+  background: linear-gradient(160deg, var(--mat) 0%, color-mix(in srgb, var(--mat) 88%, #000) 100%);
+  clip-path: polygon(0 7%, 100% 7%, 92% 100%, 8% 100%);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.12), inset -10px 0 18px rgba(0,0,0,.14), 0 14px 34px rgba(0,0,0,.45);
+  overflow: hidden;
+}
+.paperbag__handle {
+  position: absolute; top: 18%; width: 17%; height: 20%;
+  border: 4px solid rgba(0,0,0,.28);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+}
+.paperbag__handle--l { left: 28%; }
+.paperbag__handle--r { right: 28%; }
+.paperbag__shadow {
+  position: absolute; left: 50%; bottom: 8%;
+  width: 58%; height: 12%;
+  transform: translateX(-50%);
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.5), transparent 70%);
+  filter: blur(7px);
+}
+.bagart { position: absolute; inset: 0; display: grid; place-items: center; }
+.bagart .art__it { transform: translate(-50%, -50%) scale(.72); }
 
 /* ============================================================
    RESPONSIVE

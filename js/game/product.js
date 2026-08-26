@@ -63,6 +63,13 @@
               '<span class="fb__band"></span>' +
               '<span class="fb__shadow"></span>' +
             '</div>' +
+            /* --- Qesja e letrës (bag) --- */
+            '<div class="paperbag" data-paperbag>' +
+              '<span class="paperbag__handle paperbag__handle--l"></span>' +
+              '<span class="paperbag__handle paperbag__handle--r"></span>' +
+              '<span class="paperbag__body" data-bagbody></span>' +
+              '<span class="paperbag__shadow"></span>' +
+            '</div>' +
           '</div>' +
           '<div class="pv__sparks" data-sparks aria-hidden="true"></div>' +
           '<div class="pv__flash" data-stage-flash aria-hidden="true"></div>' +
@@ -174,6 +181,7 @@
       this.renderArt();
       this.renderBoxFace();
       this.renderBundleTop();
+      this.renderBagBody();
     },
 
     /* ---------------- Elementet e dizajnit ---------------- */
@@ -183,37 +191,42 @@
       if (!artHost) return;
 
       var cl = PM.CLIENTS[lvl.client] || { name: 'CLIENT' };
-      var placed = p.artwork || [];
       var pos = p.artPos || {};
 
-      function chip(id, inner, extra) {
+      function chip(id, inner) {
         var s = SLOTS[id];
         var pp = pos[id] || { x: s.x, y: s.y };
-        var isPlaced = placed.indexOf(id) >= 0;
-        return '<span class="art__it art__it--' + id + (isPlaced ? ' is-placed' : '') + '"' +
-               ' data-artit="' + id + '"' +
-               ' style="left:' + pp.x + '%;top:' + pp.y + '%">' +
+        return '<span class="art__it art__it--' + id + ' is-placed" style="left:' + pp.x + '%;top:' + pp.y + '%">' +
                  '<span class="art__ink">' + inner + '</span>' +
                  '<span class="art__foil">' + inner + '</span>' +
                  '<span class="art__relief">' + inner + '</span>' +
-                 (extra || '') +
                '</span>';
       }
 
-      var barcode = '';
-      for (var i = 0; i < 22; i++) {
-        barcode += '<i style="width:' + (Math.random() > 0.5 ? 2 : 1) + 'px"></i>';
+      var isCard = lvl.type === 'card';
+      var isLabel = lvl.type === 'label';
+      var nameTxt = isCard ? cl.name : (lvl.product || '').replace(/^[\d.\s]+/, '');
+
+      /* përmbajtja e rreshtit të poshtëm — sipas llojit */
+      var small;
+      if (isCard) {
+        small = '<span class="st">Tel +383 48 350 159</span>' +
+                '<span class="st">info@vi-print.com · Mitrovicë, Kosovë</span>';
+      } else if (isLabel) {
+        small = '<span class="st">' + U.esc(lvl.style || '') + '</span>';
+      } else {
+        small = '<span class="st">' + U.esc(lvl.style || '') + ' · VI-PRINT</span>';
       }
+
+      var smallTop = isCard ? 72 : 70;
 
       artHost.innerHTML =
         chip('logo',
           '<span class="mark"><b>VI</b><em>' + U.esc(cl.name.split(' ')[0].toUpperCase()) + '</em></span>') +
-        chip('name',
-          '<span class="nm">' + U.esc((lvl.product || '').replace(/^[\d.\s]+/, '')) + '</span>') +
-        chip('barcode', '<span class="bc">' + barcode + '</span>') +
-        '<span class="art__it art__it--smalltext is-placed" style="left:50%;top:70%">' +
-          '<span class="art__ink"><span class="st">' + U.esc(lvl.style || '') + ' · VI-PRINT</span></span>' +
-          '<span class="art__foil"><span class="st">' + U.esc(lvl.style || '') + ' · VI-PRINT</span></span>' +
+        chip('name', '<span class="nm">' + U.esc(nameTxt) + '</span>') +
+        '<span class="art__it art__it--smalltext is-placed" style="left:50%;top:' + smallTop + '%">' +
+          '<span class="art__ink">' + small + '</span>' +
+          '<span class="art__foil">' + small + '</span>' +
           '<span class="art__relief"><span class="st">' + U.esc(lvl.style || '') + '</span></span>' +
         '</span>';
     },
@@ -233,6 +246,14 @@
       if (!bt) return;
       var art = U.q('[data-art]', host);
       bt.innerHTML = '<span class="fb__topart">' + (art ? art.innerHTML : '') + '</span>';
+    },
+
+    /** Trupi i qeses së letrës pasqyron fletën e shtypur */
+    renderBagBody: function () {
+      var bb = U.q('[data-bagbody]', host);
+      if (!bb) return;
+      var art = U.q('[data-art]', host);
+      bb.innerHTML = '<span class="bagart">' + (art ? art.innerHTML : '') + '</span>';
     },
 
     /* ============================================================
@@ -338,6 +359,20 @@
         PM.sparkle(8);
         if (cb) cb();
       }, U.reduced ? 70 : 820);
+    },
+
+    /** Qesja e letrës: trupi + dorezat formohen */
+    assembleBag: function (cb) {
+      var pv = U.q('.pv', host);
+      pv.classList.add('anim-assemble');
+      PM.sfx('press');
+      setTimeout(function () {
+        PM.G.p.folded = true;
+        Product.update();
+        pv.classList.remove('anim-assemble', 'fold-1', 'fold-2', 'fold-3', 'fold-4');
+        PM.sparkle(12);
+        if (cb) cb();
+      }, U.reduced ? 80 : 950);
     },
 
     /** Tufa finale: fletushkat paketohen në një bllok 3D të rregullt */

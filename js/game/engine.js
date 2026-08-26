@@ -93,7 +93,7 @@
       matTex: 'fiber',
       inkColor: level.styleInk || '#16161C',
       printed: false,
-      artwork: [],          // id-të e chip-eve të vendosura
+      artwork: ['logo', 'name'],   // vendoset automatikisht (pa drag-drop)
       artworkScore: 0,
       effects: [],          // id-të e efekteve të zgjedhura
       foil: null,           // { tone, quality }

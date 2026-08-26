@@ -41,7 +41,7 @@
   };
 
   /* ---------------- Ruajtja (localStorage) ---------------- */
-  var SAVE_KEY = 'viprint.printmaster.v1';
+  var SAVE_KEY = 'viprint.printmaster.v2';
 
   var Save = PM.Save = {
     load: function () {
@@ -63,7 +63,7 @@
      ============================================================ */
   var G = PM.G = {
     /* progresi i përhershëm */
-    money: 0,
+    money: PM.START_MONEY || 20000,
     unlocked: 1,          // sa nivele janë hapur
     upgrades: {},         // { id: true }
     best: {},             // { levelId: percent }
@@ -338,7 +338,7 @@
   PM.restore = function () {
     var d = Save.load();
     if (!d) return false;
-    G.money = d.money || 0;
+    G.money = (typeof d.money === 'number') ? d.money : (PM.START_MONEY || 20000);
     G.unlocked = Math.max(d.unlocked || 1, 1);
     G.upgrades = d.upgrades || {};
     G.best = d.best || {};
@@ -349,6 +349,7 @@
 
   PM.resetAll = function () {
     Save.clear();
-    G.money = 0; G.unlocked = 1; G.upgrades = {}; G.best = {}; G.totalOrders = 0;
+    G.money = PM.START_MONEY || 20000;
+    G.unlocked = 1; G.upgrades = {}; G.best = {}; G.totalOrders = 0;
   };
 })();

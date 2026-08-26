@@ -8,6 +8,9 @@
    ============================================================ */
 window.PM = window.PM || {};
 
+/* Buxheti fillestar i lojtarit (në euro) — ndryshoje këtu nëse duhet */
+PM.START_MONEY = 20000;
+
 /* ---------------- KLIENTËT (fiktivë) ---------------- */
 PM.CLIENTS = {
   studio:    { name: 'Design Studio',     focus: 'Detaje të pastra' },

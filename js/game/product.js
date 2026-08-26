@@ -55,6 +55,14 @@
             '</div>' +
             /* --- Blloku i librit (bind) --- */
             '<div class="bookblock" data-bookblock></div>' +
+            /* --- Tufa e paketuar e fletushkave (bundle) --- */
+            '<div class="flyerbundle" data-flyerbundle>' +
+              '<span class="fb__top" data-bundletop></span>' +
+              '<span class="fb__front"></span>' +
+              '<span class="fb__side"></span>' +
+              '<span class="fb__band"></span>' +
+              '<span class="fb__shadow"></span>' +
+            '</div>' +
           '</div>' +
           '<div class="pv__sparks" data-sparks aria-hidden="true"></div>' +
           '<div class="pv__flash" data-stage-flash aria-hidden="true"></div>' +
@@ -153,10 +161,11 @@
       pv.classList.toggle('has-texture', !!p.texture);
       pv.classList.toggle('has-fluo', !!p.fluo);
 
-      /* Prerja / palosja / lidhja */
+      /* Prerja / palosja / lidhja / tufa */
       pv.classList.toggle('is-cut', !!p.cut);
       pv.classList.toggle('is-folded', !!p.folded);
       pv.classList.toggle('is-bound', !!p.bound);
+      pv.classList.toggle('is-bundled', !!(p.type === 'flyer' && p.bundle));
 
       /* Aksenti i klientit */
       var cl = PM.CLIENTS[lvl.client];
@@ -164,6 +173,7 @@
 
       this.renderArt();
       this.renderBoxFace();
+      this.renderBundleTop();
     },
 
     /* ---------------- Elementet e dizajnit ---------------- */
@@ -215,6 +225,14 @@
       // klonim i lehtë: kopjojmë vetëm artwork-un si HTML statik
       var art = U.q('[data-art]', host);
       bf.innerHTML = '<span class="boxart">' + (art ? art.innerHTML : '') + '</span>';
+    },
+
+    /** Fytyra e sipërme e tufës së fletushkave pasqyron fletushkën e shtypur */
+    renderBundleTop: function () {
+      var bt = U.q('[data-bundletop]', host);
+      if (!bt) return;
+      var art = U.q('[data-art]', host);
+      bt.innerHTML = '<span class="fb__topart">' + (art ? art.innerHTML : '') + '</span>';
     },
 
     /* ============================================================
@@ -306,6 +324,35 @@
         PM.sparkle(14);
         if (cb) cb();
       }, U.reduced ? 90 : 1050);
+    },
+
+    /** Palosja e fletushkës (bi-fold): krehja qendrore + animacion */
+    assembleFlyer: function (cb) {
+      var pv = U.q('.pv', host);
+      pv.classList.add('anim-flyerfold');
+      PM.sfx('click');
+      setTimeout(function () {
+        PM.G.p.folded = true;
+        Product.update();
+        pv.classList.remove('anim-flyerfold', 'fold-1', 'fold-2', 'fold-3', 'fold-4');
+        PM.sparkle(8);
+        if (cb) cb();
+      }, U.reduced ? 70 : 820);
+    },
+
+    /** Tufa finale: fletushkat paketohen në një bllok 3D të rregullt */
+    runBundle: function (cb) {
+      var pv = U.q('.pv', host);
+      if (!pv) { if (cb) cb(); return; }
+      PM.G.p.bundle = true;
+      Product.update();
+      pv.classList.add('anim-bundle');
+      PM.sfx('press');
+      PM.sparkle(20);
+      setTimeout(function () {
+        pv.classList.remove('anim-bundle');
+        if (cb) cb();
+      }, U.reduced ? 60 : 950);
     },
 
     /** Lidhja e librit */

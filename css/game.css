@@ -1065,7 +1065,7 @@ img, svg { display: block; max-width: 100%; }
 .art__foil, .art__relief { display: none; }
 
 /* ---------- SHTYPI (ink) ---------- */
-.art__ink { opacity: 0; transition: opacity .5s var(--e); }
+.art__ink { opacity: 0; transition: opacity .5s var(--e); color: var(--ink); }
 .pv.is-printed .art__ink { opacity: 1; }
 
 /* ---------- FOLIA ---------- */
@@ -1223,9 +1223,30 @@ img, svg { display: block; max-width: 100%; }
   display: none;
   transform-style: preserve-3d;
 }
-.pv.is-folded .sheet { opacity: 0; }
-.pv.is-folded .box3d { display: block; animation: boxAppear .9s var(--e); }
+.pv[data-type="box"].is-folded .sheet { opacity: 0; }
+.pv[data-type="box"].is-folded .box3d { display: block; animation: boxAppear .9s var(--e); }
 @keyframes boxAppear { from { opacity: 0; transform: translateY(14px) scale(.9); } }
+
+/* Fletushka e palosur (bi-fold) — krehje qendrore + animacion, jo kuti */
+.pv[data-type="flyer"].is-folded .sheet {
+  transform: rotateX(7deg) rotateY(-9deg);
+  transition: transform .6s var(--e);
+}
+.pv[data-type="flyer"].is-folded .face::after {
+  content: '';
+  position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,.22) 18%, rgba(0,0,0,.22) 82%, transparent);
+  pointer-events: none;
+}
+.pv[data-type="flyer"].is-folded .sheet__flap { display: none; }
+
+.pv.anim-flyerfold .sheet { animation: flyerFold .8s var(--e); }
+@keyframes flyerFold {
+  0%   { transform: rotateX(0) rotateY(0); }
+  45%  { transform: rotateX(-6deg) rotateY(14deg); }
+  100% { transform: rotateX(7deg) rotateY(-9deg); }
+}
 
 .box3d__f {
   position: absolute;
@@ -1284,6 +1305,84 @@ img, svg { display: block; max-width: 100%; }
 }
 .pv.is-bound .bookblock { opacity: 1; }
 .pv.is-bound .sheet { width: 40%; aspect-ratio: .72 / 1; }
+
+/* ============================================================
+   TUFA E FLETUSHKA (bundle) — isometrike, bezhë e ngrohtë
+   ============================================================ */
+
+.flyerbundle {
+  position: absolute; inset: 0;
+  display: none;
+  transform-style: preserve-3d;
+}
+.pv.is-bundled .flyerbundle { display: block; animation: bundleIn .9s var(--e); }
+.pv.is-bundled .sheet { opacity: 0; }
+.pv.is-bundled .box3d, .pv.is-bundled .bookblock { display: none; }
+
+@keyframes bundleIn {
+  from { opacity: 0; transform: translateY(20px) scale(.88); }
+}
+.pv.anim-bundle .flyerbundle { animation: bundlePop 1s var(--e); }
+@keyframes bundlePop {
+  0%   { opacity: 0; transform: translateY(26px) scale(.8); }
+  55%  { opacity: 1; transform: translateY(-3px) scale(1.03); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* fytyra e sipërme — fletushka e parë e tufës (bezhë e ngrohtë + artwork) */
+.fb__top {
+  position: absolute; left: 50%; top: 35%;
+  width: 42%; height: 30%;
+  transform: translateX(-58%) skewX(-22deg) skewY(4deg);
+  background: linear-gradient(155deg, #F6EEDE 0%, #EBDCBD 55%, #DEC79F 100%);
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.32), inset 0 4px 12px rgba(255,255,255,.4);
+  overflow: hidden;
+}
+/* fytyra e përparme — pirgu i letrës (tehet e fletëve) */
+.fb__front {
+  position: absolute; left: 50%; top: 53%;
+  width: 42%; height: 21%;
+  transform: translateX(-58%) skewX(-22deg) skewY(4deg);
+  background: linear-gradient(180deg, #EAD8B6 0%, #CFB68C 55%, #BDA073 100%);
+  border-radius: 0 0 6px 6px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14), inset 0 -14px 24px rgba(0,0,0,.24);
+}
+.fb__front::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(180deg, rgba(120,88,44,.17) 0 1px, transparent 1px 6px);
+}
+/* fytyra anësore — ana e pirgut (e hijëzuar) */
+.fb__side {
+  position: absolute; left: 50%; top: 40%;
+  width: 16%; height: 30%;
+  transform: translateX(118%) skewY(-20deg) skewX(6deg);
+  background: linear-gradient(180deg, #DCC6A0 0%, #BDA074 100%);
+  border-radius: 0 5px 0 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.08), inset -8px 0 14px rgba(0,0,0,.14);
+}
+/* rripi i paketimit */
+.fb__band {
+  position: absolute; left: 50%; top: 50%;
+  width: 44%; height: 7%;
+  transform: translateX(-58%) skewX(-22deg) skewY(4deg);
+  background: linear-gradient(180deg, #D0A24E 0%, #9A7422 55%, #6E511B 100%);
+  border-radius: 2px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.32);
+}
+/* hija e butë në dysheme */
+.fb__shadow {
+  position: absolute; left: 50%; bottom: 12%;
+  width: 56%; height: 13%;
+  transform: translateX(-50%);
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.52), transparent 70%);
+  filter: blur(7px);
+}
+/* artwork-u i fletushkës mbi fytyrën e sipërme */
+.fb__topart { position: absolute; inset: 0; }
+.fb__topart .art__it { transform: translate(-50%, -50%) scale(.6); }
+.fb__topart .art__it--smalltext { opacity: .9; }
 
 /* ============================================================
    RESPONSIVE

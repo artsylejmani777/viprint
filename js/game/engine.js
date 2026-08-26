@@ -105,6 +105,7 @@
       cut: false,
       folded: false,
       bound: false,
+      bundle: false,
       inserts: [],
       shipping: null,
       defects: [],          // defektet aktive (QC)

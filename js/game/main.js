@@ -371,7 +371,10 @@
     /* Produkti i përfunduar rrotullohet pranë raportit */
     PM.Product.spin(true);
     var mini = U.q('[data-repproduct]');
-    if (mini && els.pv.firstChild) mini.appendChild(els.pv.firstChild);
+    if (mini) {
+      mini.innerHTML = '';                 // pastroje produktin e mëparshëm
+      if (els.pv.firstChild) mini.appendChild(els.pv.firstChild);
+    }
 
     U.q('[data-again]', els.report).addEventListener('click', function () {
       PM.Product.spin(false); startLevel();

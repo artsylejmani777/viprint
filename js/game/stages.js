@@ -694,11 +694,14 @@
     finish: function (ctx, secs) {
       var q = Math.round(U.clamp(100 - Math.max(secs - 3.2, 0) * 7, 55, 100));
       ctx.m.fold = q;
-      PM.Product.assembleBox(function () {
-        if (q >= 92) verdict(true, 'FOLDING PRECISE ' + q + '%', null, 'Kutia 3D u formua');
+      var done = function () {
+        if (q >= 92) verdict(true, 'FOLDING PRECISE ' + q + '%', null,
+          ctx.level.type === 'flyer' ? 'Fletushka u palos rregullt' : 'Kutia 3D u formua');
         else verdict(true, 'FOLDED ' + q + '%');
         ctx.done();
-      });
+      };
+      if (ctx.level.type === 'flyer') PM.Product.assembleFlyer(done);
+      else PM.Product.assembleBox(done);
     },
 
     autoSolve: function () {
@@ -910,8 +913,15 @@
       else if (PM.G.timeLeft > 0) { ctx.m.bonus += 5; ctx.m.satisfaction += 3; verdict(true, 'ON TIME +5'); }
       else { ctx.m.penalties += 15; verdict(false, null, 'DEADLINE MISSED'); }
       var body = document.querySelector('.truck');
-      if (body) body.classList.add('is-go');
-      setTimeout(function () { ctx.done(); }, 900);
+
+      function go() {
+        if (body) body.classList.add('is-go');
+        setTimeout(function () { ctx.done(); }, 900);
+      }
+
+      /* Për fletushka: shndërro në tufë të paketuar 3D para nisjes */
+      if (ctx.level.type === 'flyer') PM.Product.runBundle(go);
+      else go();
     },
 
     autoSolve: function () { this.finish(this._ctx); }

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>VI-PRINT: Print Master</title>
+<meta name="description" content="VI-PRINT: Print Master — një mini-eksperiencë prodhimi brenda shtypshkronjës ViPrint. Pranoni porosi, prodhoni dhe dorëzoni produkte të shtypura premium.">
+<meta name="theme-color" content="#0E0E12">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+
+<div class="game" data-game>
+
+  <!-- ═══════════ BOOT ═══════════ -->
+  <section class="screen boot" data-screen="boot">
+    <div class="boot__logo"><b>VI</b><span>PRINT</span></div>
+    <div class="boot__sub">Print Master</div>
+    <div class="boot__bar"><i></i></div>
+    <div class="boot__fine">SHTYPSHKRONJË · MITROVICË · KOSOVË</div>
+  </section>
+
+  <!-- ═══════════ MENU ═══════════ -->
+  <section class="screen" data-screen="menu">
+    <header class="hdr">
+      <span class="hdr__logo"><b>VI</b><span>PRINT</span></span>
+      <span class="hdr__tag">Print Master</span>
+      <span class="hdr__spacer"></span>
+      <span class="hdr__wallet"><span>BALANCE</span> <b data-wallet>€0</b></span>
+      <button class="hdr__ico" data-mute aria-pressed="false" aria-label="Tingulli">🔊</button>
+      <button class="hdr__ico" data-goto="menu" aria-label="Rifresko">⟳</button>
+      <a class="hdr__ico hdr__ico--link" href="index.html" aria-label="Kthehu në faqe">✕</a>
+    </header>
+
+    <div class="screen__inner menu">
+      <div class="menu__head">
+        <h1>PRANO POROSINË. <em>PRODHOJE ATË.</em></h1>
+        <p><b data-orders>0</b> porosi të kryera · <b data-upcount>0 / 9</b> upgrade të instaluara. Drejto fabrikën: çdo fazë e transformon produktin.</p>
+      </div>
+
+      <div class="board" data-board-list></div>
+
+      <div class="factory__head">
+        <h2>UPGRADE-T E FABRIKËS</h2>
+        <span>fitoni € nga çdo porosi e suksesshme</span>
+      </div>
+      <div class="factory" data-factory></div>
+
+      <div style="height:1.5rem"></div>
+      <p class="boot__fine" style="margin:0 0 1rem">Simulim prodhimi. Klientët, vlerat dhe kostot janë fiktive; teknikat e shtypit janë ato reale të ViPrint. · <button data-reset style="color:var(--text-mut);text-decoration:underline">Rifillo progresin</button></p>
+    </div>
+  </section>
+
+  <!-- ═══════════ ORDER ═══════════ -->
+  <section class="screen order" data-screen="order" data-order></section>
+
+  <!-- ═══════════ PLAY ═══════════ -->
+  <section class="screen play" data-screen="play">
+    <div class="hud">
+      <div class="hud__l">
+        <div class="hud__client" data-hud-client></div>
+        <div class="hud__product" data-hud-product></div>
+        <div class="hud__spec" data-hud-spec></div>
+      </div>
+      <div class="hud__time">
+        <span class="t" data-time>0.0</span>
+        <span class="timebar"><i data-timebar></i></span>
+      </div>
+    </div>
+
+    <div class="play__grid">
+      <div class="viewport" data-viewport></div>
+      <aside class="controls">
+        <div class="pan" data-panel></div>
+        <div class="track" data-track></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ═══════════ REPORT ═══════════ -->
+  <section class="screen report" data-screen="report">
+    <div class="repproduct" data-repproduct></div>
+    <div data-report></div>
+  </section>
+
+</div>
+
+<!-- evente / toasts -->
+<div class="event" data-event></div>
+<div class="toasts" data-toasts></div>
+
+<script src="js/game/data.js"></script>
+<script src="js/game/engine.js"></script>
+<script src="js/game/product.js"></script>
+<script src="js/game/stages.js"></script>
+<script src="js/game/main.js"></script>
+</body>
+</html>

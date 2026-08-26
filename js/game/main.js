@@ -209,7 +209,11 @@
 
     var ctx = {
       level: G.level, p: G.p, m: G.m,
-      done: function () { advance(); }
+      done: function () {
+        if (ctx._done) return;
+        ctx._done = true;
+        advance();
+      }
     };
     stage.build(els.panel, ctx);
     els.panel.classList.remove('is-in'); void els.panel.offsetWidth; els.panel.classList.add('is-in');
@@ -463,16 +467,17 @@
         var seen = [];
         openOrder(idx);
         startLevel();
-        var guard = 0;
+        var guard = 0, lastStage = null;
         (function step() {
-          if (++guard > 60) { cb({ error: 'guard', seen: seen }); return; }
+          if (++guard > 240) { cb({ error: 'guard', seen: seen }); return; }
           if (els.root.getAttribute('data-screen') === 'report') {
             cb({ ok: true, seen: seen, pct: U.q('.rep__pct b') ? U.q('.rep__pct b').textContent : null,
                  money: G.money, unlocked: G.unlocked });
             return;
           }
           var cur = G.stages[G.stageIdx];
-          if (activeStage && activeStage.autoSolve) {
+          if (activeStage && activeStage.autoSolve && activeStage !== lastStage) {
+            lastStage = activeStage;
             seen.push(cur);
             try { activeStage.autoSolve(); } catch (e) { cb({ error: cur + ': ' + e.message, seen: seen }); return; }
           }

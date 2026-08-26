@@ -168,15 +168,36 @@ Punon edhe direkt në Netlify / Vercel / Cloudflare Pages — thjesht drag & dro
 
 ---
 
-## Faqja GAME (së shpejti)
+## Faqja GAME — "Print Master"
 
-Butoni **GAME** ekziston në navbar dhe është shënuar *"së shpejti"* — loja **nuk** është
-ndërtuar, sipas kërkesës. Kur të vijë koha:
+Loja është **e ndërtuar** dhe e lidhur. Hape me `game.html` (ose butoni **GAME** në navbar).
 
-1. Krijo `game.html` (rikthe `<link>`-at e CSS-it dhe navbar-in nga `index.html`).
-2. Në `index.html` zëvendëso `<button ... aria-disabled="true">` me
-   `<a class="btn btn--ghost-light btn--sm" href="game.html">GAME</a>`.
-3. Të njëjtën ndryshim bëje edhe në `.drawer` për mobile.
+| Çka | Ku |
+|---|---|
+| Hyrja e lojës | `game.html` |
+| Stilet (charcoal · ar · blu · magenta) | `css/game.css` |
+| Të dhënat (8 nivele, klientë, katalog, upgrade) | `js/game/data.js` |
+| Motori (state, ekonomi, pikë, timer, audio, save) | `js/game/engine.js` |
+| Produkti 3D + transformimet (CSS 3D) | `js/game/product.js` |
+| 16 fazat e prodhimit (mini-lojëra) | `js/game/stages.js` |
+| Rrjedha (board, HUD, evente, raport, upgrade) | `js/game/main.js` |
+
+**Koncepti:** lojtari pranon një porosi klienti dhe e prodhon produktin e shtypur përmes
+deri në 15 fazave — format → material → artwork → shtyp → efekte → folie → embosim → finish
+→ llak parcial → shtancim → palosje → lidhje → montim → kontroll cilësie → paketim → dërgesë.
+**Produkti transformohet dukshëm pas çdo faze** (letër e bardhë → karton i zi → shtyp →
+folie ari → reliev 3D → llak → prerje → kuti 3D).
+
+- **8 nivele** me klientë fiktivë (Biznes Karta → Flyer → Vizitkartë Premium → Luxury Cosmetics
+  → Paketim Torte → Fashion Brand → Libër → VIP Corporate), secili me teknikat e veta.
+- **Ekonomia:** çdo porosi ka të ardhura, kosto materiale/makinerish/efektesh/mbeturinash
+  dhe fitim. Fitimet blejnë **9 upgrade të fabrikës** (printer më i shpejtë, prerës më i mirë…).
+- **Evente të papritura** nga niveli 4+ (bllokim makine, bojë e ulët, folie e shmangur…).
+- Punon me **mouse + touch** (drag-and-drop, tap, swipe), desktop/tablet/mobile.
+- Teknikat e shtypit janë **vetëm ato reale të ViPrint**; klientët, çmimet dhe kostot janë **fiktive**
+  (e shënuar si e tillë në lojë).
+
+Verifikuar me Chrome headless: **0 gabime JS, 8/8 nivele në 100%, pa overflow në 375/820/1440px.**
 
 ---
 

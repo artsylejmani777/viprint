@@ -117,6 +117,7 @@
       if (!p) return;
 
       var pv = U.q('.pv', host);
+      if (!pv) return;
 
       /* Tipi i produktit → proporcionet */
       pv.setAttribute('data-type', p.type);

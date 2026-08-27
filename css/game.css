@@ -1124,6 +1124,17 @@ img, svg { display: block; max-width: 100%; }
 .art__it--logo .mark { font-family: var(--font); font-weight: 800; letter-spacing: -.04em; font-size: 1.6em; text-align: center; }
 .art__it--logo .mark b { font-weight: 800; }
 .art__it--logo .mark em { font-style: normal; font-weight: 400; opacity: .9; }
+/* logo reale e markës mbi produkt */
+.art__it--logo .art__logo {
+  height: 3.4em; width: auto; max-width: 160%;
+  object-fit: contain; display: block; margin: 0 auto;
+}
+/* logo e klientit në kartën e porosisë */
+.orow__client { display: flex; align-items: center; gap: .55rem; }
+.orow__client .clogo { height: 2.3rem; width: auto; object-fit: contain; }
+/* logo e klientit në HUD */
+.hud__client { display: inline-flex; align-items: center; gap: .5rem; }
+.hud__client .hud-logo { height: 1.7rem; width: auto; object-fit: contain; }
 .art__it--name .nm { font-weight: 700; letter-spacing: -.01em; font-size: .92em; text-align: center; white-space: nowrap; }
 .art__it--smalltext { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .art__it--smalltext .st { font-size: .62em; letter-spacing: .06em; white-space: nowrap; }

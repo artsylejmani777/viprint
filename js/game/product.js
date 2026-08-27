@@ -220,9 +220,17 @@
 
       var smallTop = isCard ? 72 : 70;
 
+      /* chip i veçantë për logon reale (gjithmonë i dukshëm, jashtë shtresave ink/foil) */
+      function logoChip(inner) {
+        var s = SLOTS.logo;
+        var pp = pos.logo || { x: s.x, y: s.y };
+        return '<span class="art__it art__it--logo is-placed" style="left:' + pp.x + '%;top:' + pp.y + '%">' + inner + '</span>';
+      }
+
       artHost.innerHTML =
-        chip('logo',
-          '<span class="mark"><b>VI</b><em>' + U.esc(cl.name.split(' ')[0].toUpperCase()) + '</em></span>') +
+        logoChip(cl.logo
+          ? '<img class="art__logo" src="' + cl.logo + '" alt="">'
+          : '<span class="mark"><b>VI</b><em>' + U.esc(cl.name.split(' ')[0].toUpperCase()) + '</em></span>') +
         chip('name', '<span class="nm">' + U.esc(nameTxt) + '</span>') +
         '<span class="art__it art__it--smalltext is-placed" style="left:50%;top:' + smallTop + '%">' +
           '<span class="art__ink">' + small + '</span>' +

@@ -104,7 +104,7 @@
           '<span class="ocard__id">' + t.icon + ' ' + U.esc(t.label) + '</span>' +
         '</div>' +
         '<dl class="ocard__rows">' +
-          row('KLIENTI', cl.name) +
+          '<div class="orow"><dt>KLIENTI</dt><dd class="orow__client">' + (cl.logo ? '<img class="clogo" src="' + cl.logo + '" alt="">' : '') + '<span>' + U.esc(cl.name) + '</span></dd></div>' +
           row('PRODUKTI', G.order.product) +
           row('MATERIALI', mat.label) +
           row('FINISHIMI', fins || 'Pa finishim') +
@@ -116,7 +116,7 @@
           '<button class="gbtn gbtn--ghost" type="button" data-back>KTHEHU</button>' +
           '<button class="gbtn gbtn--gold" type="button" data-accept>PRANO POROSINË</button>' +
         '</div>' +
-        '<p class="ocard__fine">Simulim prodhimi — klientët, vlerat dhe kostot janë fiktive.</p>' +
+        '<p class="ocard__fine">Simulim prodhimi — vlerat dhe kostot janë fiktive.</p>' +
       '</div>';
 
     U.q('[data-back]', els.order).addEventListener('click', function () { show('menu'); });
@@ -138,7 +138,7 @@
     G.stageIdx = 0;
 
     var cl = PM.CLIENTS[lvl.client];
-    els.hudClient.textContent = cl.name;
+    els.hudClient.innerHTML = (cl.logo ? '<img class="hud-logo" src="' + cl.logo + '" alt="">' : '') + '<span>' + U.esc(cl.name) + '</span>';
     els.hudProd.textContent = lvl.product;
     els.hudSpec.innerHTML = '<i>' + U.esc(lvl.style) + '</i>';
 

@@ -11,16 +11,26 @@ window.PM = window.PM || {};
 /* Buxheti fillestar i lojtarit (në euro) — ndryshoje këtu nëse duhet */
 PM.START_MONEY = 20000;
 
-/* ---------------- KLIENTËT (fiktivë) ---------------- */
+/* ---------------- KLIENTËT ----------------
+   Markat reale (logot zyrtare) + klientët fiktivë.
+   prefers = cilat produkte porosisin zakonisht.
+   Vlerat/kostot mbeten fiktive (simulim). */
 PM.CLIENTS = {
-  studio:    { name: 'Design Studio',     focus: 'Detaje të pastra' },
-  cosmetics: { name: 'Luxury Cosmetics',  focus: 'Pamje premium' },
-  fashion:   { name: 'Fashion Brand',     focus: 'Folie + teksturë' },
-  resto:     { name: 'Restaurant',        focus: 'Shpejtësi' },
-  bakery:    { name: 'Bakery',            focus: 'Paketim' },
-  corporate: { name: 'Corporate Client',  focus: 'Precizion' },
-  publisher: { name: 'Publisher',         focus: 'Libra + lidhje' },
-  vip:       { name: 'VIP Brand',         focus: 'Cilësi maksimale' }
+  /* — Marka reale me logo — */
+  bk:   { name: 'Burger King',  logo: 'assets/brands/burger-king.png', accent: '#D62300', focus: 'Paketim ushqimi të shpejtë', prefers: ['box', 'bag', 'flyer', 'label', 'promo'] },
+  kfc:  { name: 'KFC',          logo: 'assets/brands/kfc.png',         accent: '#E4002B', focus: 'Paketim + fletushka',        prefers: ['box', 'bag', 'flyer', 'promo'] },
+  mcd:  { name: "McDonald's",   logo: 'assets/brands/mcdonalds.png',   accent: '#FFC72C', focus: 'Qese e paketim',             prefers: ['box', 'bag', 'flyer', 'label'] },
+  ph:   { name: 'Pizza Hut',    logo: 'assets/brands/pizzahut.png',    accent: '#EE3124', focus: 'Kuti pica + promovim',       prefers: ['box', 'flyer', 'promo', 'label'] },
+  sub:  { name: 'Subway',       logo: 'assets/brands/subway.png',      accent: '#008C15', focus: 'Fletushka + menu',           prefers: ['flyer', 'promo', 'box', 'bag'] },
+  /* — Klientët fiktivë — */
+  studio:    { name: 'Design Studio',     focus: 'Detaje të pastra',  prefers: ['card', 'promo'] },
+  cosmetics: { name: 'Luxury Cosmetics',  focus: 'Pamje premium',     prefers: ['box', 'label', 'promo'] },
+  fashion:   { name: 'Fashion Brand',     focus: 'Folie + teksturë',  prefers: ['box', 'bag', 'label'] },
+  resto:     { name: 'Restaurant',        focus: 'Shpejtësi',         prefers: ['flyer', 'box', 'bag', 'promo'] },
+  bakery:    { name: 'Bakery',            focus: 'Paketim',           prefers: ['box', 'bag', 'label'] },
+  corporate: { name: 'Corporate Client',  focus: 'Precizion',         prefers: ['card', 'promo', 'flyer'] },
+  publisher: { name: 'Publisher',         focus: 'Libra + lidhje',    prefers: ['promo', 'flyer'] },
+  vip:       { name: 'VIP Brand',         focus: 'Cilësi maksimale',  prefers: ['box', 'card', 'promo'] }
 };
 
 /* ---------------- MATERIALET ---------------- */
@@ -110,7 +120,13 @@ PM._byId = byId;
 
 PM.makeOrder = function (typeId) {
   var t = byId(PM.PRODUCT_TYPES, typeId);
-  var client = pick(Object.keys(PM.CLIENTS));
+  /* klientët që e porosisin zakonisht këtë produkt; ndryshe: cilido */
+  var keys = Object.keys(PM.CLIENTS);
+  var pool = keys.filter(function (k) {
+    return PM.CLIENTS[k].prefers && PM.CLIENTS[k].prefers.indexOf(t.id) !== -1;
+  });
+  if (!pool.length) pool = keys;
+  var client = pick(pool);
   var material = pick(t.materials);
   var nFin = Math.random() < 0.5 ? 1 : 2;
   var finishes = pickN(t.finishes, Math.min(nFin, t.finishes.length));

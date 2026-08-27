@@ -12,10 +12,18 @@ const C = {
 };
 
 function paper(color = C.paper, rough = 0.55) {
-  return new THREE.MeshPhysicalMaterial({ color, roughness: rough, metalness: 0, clearcoat: 0.12, clearcoatRoughness: 0.4 });
+  return new THREE.MeshPhysicalMaterial({
+    color, roughness: rough, metalness: 0,
+    clearcoat: 0.12, clearcoatRoughness: 0.4,
+    map: grainTex, bumpMap: grainBump, bumpScale: 0.45,
+  });
 }
 function cover(color = C.navy, rough = 0.42) {
-  return new THREE.MeshPhysicalMaterial({ color, roughness: rough, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.2 });
+  return new THREE.MeshPhysicalMaterial({
+    color, roughness: rough, metalness: 0,
+    clearcoat: 0.35, clearcoatRoughness: 0.2,
+    map: linenTex, bumpMap: linenBump, bumpScale: 0.55,
+  });
 }
 function foil(color = C.gold) {
   return new THREE.MeshPhysicalMaterial({ color, roughness: 0.3, metalness: 0.55 });
@@ -23,6 +31,110 @@ function foil(color = C.gold) {
 function mat(color, rough = 0.8) {
   return new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0 });
 }
+
+/* ================= TEKSTURA PROCEDURALE (canvas 2D) ================= */
+function mkCanvas(size, draw) {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  draw(c.getContext('2d'), size);
+  return c;
+}
+function texFrom(canvas, repeat = 1) {
+  const t = new THREE.CanvasTexture(canvas);
+  t.colorSpace = THREE.SRGBColorSpace;
+  if (repeat > 1) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat, repeat); }
+  return t;
+}
+function bumpFrom(canvas, repeat = 1) {
+  const t = new THREE.CanvasTexture(canvas);
+  if (repeat > 1) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat, repeat); }
+  return t;
+}
+
+/* kokrra letre (ngjyre + bump) */
+const grainCanvas = mkCanvas(256, (ctx, s) => {
+  ctx.fillStyle = '#f6f2ea'; ctx.fillRect(0, 0, s, s);
+  for (let i = 0; i < 1600; i++) {
+    const v = 224 + Math.random() * 28;
+    ctx.fillStyle = `rgba(${v | 0},${v | 0},${(v - 6) | 0},0.11)`;
+    ctx.fillRect(Math.random() * s, Math.random() * s, 1.7, 1.7);
+  }
+});
+const grainTex = texFrom(grainCanvas, 4);
+const grainBump = bumpFrom(grainCanvas, 4);
+
+/* pelhure e endur per kopertina (gri i celet -> ngjyroset nga materiali) */
+const linenCanvas = mkCanvas(256, (ctx, s) => {
+  ctx.fillStyle = '#d9d9d9'; ctx.fillRect(0, 0, s, s);
+  ctx.strokeStyle = 'rgba(140,140,140,0.4)'; ctx.lineWidth = 1.3;
+  for (let i = 0; i <= s; i += 7) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, s); ctx.stroke(); }
+  ctx.strokeStyle = 'rgba(195,195,195,0.5)';
+  for (let i = 3; i <= s; i += 7) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(s, i); ctx.stroke(); }
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 0.8;
+  for (let i = 1; i <= s; i += 7) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, s); ctx.stroke(); }
+});
+const linenTex = texFrom(linenCanvas, 3);
+const linenBump = bumpFrom(linenCanvas, 3);
+
+/* modele abstrakte printimi per postera/revista (PA tekst) */
+function printCanvas(colors, kind) {
+  return mkCanvas(256, (ctx, s) => {
+    const g = ctx.createLinearGradient(0, 0, s, s);
+    g.addColorStop(0, colors[0]); g.addColorStop(0.55, colors[1]); g.addColorStop(1, colors[2]);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
+    if (kind === 0) {
+      ctx.fillStyle = 'rgba(255,255,255,0.28)';
+      for (let i = 0; i < 6; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * s, Math.random() * s, 16 + Math.random() * 34, 0, 7);
+        ctx.fill();
+      }
+      ctx.fillStyle = 'rgba(20,40,70,0.22)';
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * s, Math.random() * s, 10 + Math.random() * 22, 0, 7);
+        ctx.fill();
+      }
+    } else if (kind === 1) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 11;
+      for (let i = -s; i < s * 2; i += 28) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + s, s); ctx.stroke(); }
+      ctx.strokeStyle = 'rgba(10,30,55,0.25)'; ctx.lineWidth = 5;
+      for (let i = -s + 14; i < s * 2; i += 28) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + s, s); ctx.stroke(); }
+    } else {
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.fillRect(s * 0.08, s * 0.12, s * 0.38, s * 0.34);
+      ctx.fillStyle = 'rgba(15,30,55,0.3)';
+      ctx.fillRect(s * 0.52, s * 0.58, s * 0.4, s * 0.32);
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fillRect(s * 0.5, s * 0.1, s * 0.42, s * 0.2);
+    }
+  });
+}
+const posterA = texFrom(printCanvas(['#2f6aa8', '#d8e8f6', '#22487a'], 1), 1);
+const posterB = texFrom(printCanvas(['#c23b2a', '#f3d3c2', '#7c2417'], 2), 1);
+const posterC = texFrom(printCanvas(['#1d6e52', '#d9e8d2', '#12402e'], 0), 1);
+const magTex = texFrom(printCanvas(['#b93327', '#f0c4b0', '#64121b'], 0), 1);
+
+/* rreshta per bllokun / fletoren */
+const ruledCanvas = mkCanvas(256, (ctx, s) => {
+  ctx.fillStyle = '#fbf9f3'; ctx.fillRect(0, 0, s, s);
+  ctx.strokeStyle = 'rgba(110,145,205,0.4)'; ctx.lineWidth = 1.6;
+  for (let i = 20; i < s; i += 20) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(s, i); ctx.stroke(); }
+  ctx.strokeStyle = 'rgba(230,90,120,0.45)'; ctx.lineWidth = 1.6;
+  for (let i = 10; i < s; i += 100) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(s, i); ctx.stroke(); }
+});
+const ruledTex = texFrom(ruledCanvas, 2);
+
+/* gradient vertikal per murin e studios: i çelet lart, hije e bute te baza */
+const gradCanvas = mkCanvas(64, (ctx, s) => {
+  const g = ctx.createLinearGradient(0, 0, 0, s);
+  g.addColorStop(0, '#d3cec6');
+  g.addColorStop(0.55, '#e7e2db');
+  g.addColorStop(1, '#efebe4');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
+});
+const gradTex = texFrom(gradCanvas, 1);
+
 function rb(w, h, d, r, m) {
   return new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, r), m);
 }
@@ -114,10 +226,13 @@ function makeFlyerStack(w, d, n, accentColor) {
   return g;
 }
 
-/* postera te mbeshtjellur (rulo) me brez */
-function makePosterRoll(len, r, color, bandColor) {
+/* postera te mbeshtjellur (rulo) me brez + model printimi */
+function makePosterRoll(len, r, mapTex, bandColor) {
   const g = new THREE.Group();
-  const roll = cyl(r, r, len, paper(color, 0.62), 24);
+  const roll = new THREE.Mesh(
+    new THREE.CylinderGeometry(r, r, len, 28),
+    new THREE.MeshPhysicalMaterial({ map: mapTex, roughness: 0.55, clearcoat: 0.28, clearcoatRoughness: 0.3 })
+  );
   roll.rotation.x = Math.PI / 2;
   g.add(roll);
   const band = box(0.03, r * 2 + 0.03, len * 0.12, cover(bandColor));
@@ -160,12 +275,16 @@ function makeFolder(w, h, color) {
   return g;
 }
 
-/* bllok fletesh me karton */
+/* bllok fletesh me karton (kopertina poshte, fletet me rreshta siper) */
 function makeNotepad(w, h, d, color) {
   const g = new THREE.Group();
-  const pages = rb(w, h, d, 0.01, paper(C.white, 0.62));
+  const pages = new THREE.Mesh(
+    new RoundedBoxGeometry(w, h, d, 3, 0.01),
+    new THREE.MeshPhysicalMaterial({ map: ruledTex, roughness: 0.58, clearcoat: 0.1 })
+  );
   g.add(pages);
-  const board = rb(w + 0.02, h * 1.06, d + 0.02, 0.015, cover(color));
+  const board = rb(w + 0.02, h * 1.08, d + 0.02, 0.015, cover(color));
+  board.position.y = -h * 0.56;
   g.add(board);
   const glue = box(w - 0.06, 0.016, 0.055, mat(0xb9b2a6, 0.9));
   glue.position.set(0, h / 2, d / 2 - 0.03);
@@ -235,7 +354,7 @@ function shadows(g) {
 /* ================= SKENA ================= */
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(1);
+renderer.setPixelRatio(1.2);
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -260,7 +379,7 @@ RectAreaLightUniformsLib.init();
 /* dyshemeja + muri i lakuar (cove) */
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(60, 60),
-  new THREE.MeshPhysicalMaterial({ color: C.floor, roughness: 0.32, metalness: 0, clearcoat: 0.3, clearcoatRoughness: 0.5 })
+  new THREE.MeshPhysicalMaterial({ color: C.floor, roughness: 0.26, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.28 })
 );
 floor.rotation.x = -Math.PI / 2;
 floor.receiveShadow = true;
@@ -268,7 +387,7 @@ scene.add(floor);
 
 const cove = new THREE.Mesh(
   new THREE.CylinderGeometry(14, 14, 10, 64, 1, true, 0, Math.PI),
-  mat(C.bg, 0.95)
+  new THREE.MeshStandardMaterial({ map: gradTex, roughness: 0.95 })
 );
 cove.position.set(0, 5, -6);
 cove.rotation.y = Math.PI;
@@ -318,7 +437,10 @@ const catalog = group(scene, -0.55, 0, -0.75, 0.45);
 catalog.add(makeOpenBook(0.55, 0.42, C.magenta));
 
 const mag = group(scene, -0.5, 0, 0.75, 0.35);
-const m1 = rb(0.62, 0.02, 0.42, 0.008, cover(C.coral, 0.18));
+const m1 = new THREE.Mesh(
+  new RoundedBoxGeometry(0.62, 0.02, 0.42, 3, 0.008),
+  new THREE.MeshPhysicalMaterial({ map: magTex, roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.12 })
+);
 const m2 = rb(0.6, 0.018, 0.4, 0.008, paper(C.white, 0.55));
 m2.position.set(-0.008, 0.028, 0);
 mag.add(m1); mag.add(m2);
@@ -338,9 +460,9 @@ folder.add(makeFolder(0.42, 0.6, C.navy));
 
 /* Grupi D — postera + tufe + kalendar + certifikate + diplome */
 const posters = group(scene, 3.35, 0, -0.5, 0.1);
-const r1 = makePosterRoll(0.95, 0.065, C.white, C.navy); r1.position.set(-0.12, 0, 0); r1.rotation.z = 0.08; posters.add(r1);
-const r2 = makePosterRoll(0.9, 0.06, C.cream, C.coral); r2.position.set(0.05, 0, 0.05); r2.rotation.z = -0.05; posters.add(r2);
-const r3 = makePosterRoll(0.88, 0.058, C.white, C.gold); r3.position.set(0.2, 0, -0.04); r3.rotation.z = 0.16; posters.add(r3);
+const r1 = makePosterRoll(0.95, 0.065, posterA, C.navy); r1.position.set(-0.12, 0, 0); r1.rotation.z = 0.08; posters.add(r1);
+const r2 = makePosterRoll(0.9, 0.06, posterB, C.coral); r2.position.set(0.05, 0, 0.05); r2.rotation.z = -0.05; posters.add(r2);
+const r3 = makePosterRoll(0.88, 0.058, posterC, C.gold); r3.position.set(0.2, 0, -0.04); r3.rotation.z = 0.16; posters.add(r3);
 
 const flyers = group(scene, 3.0, 0, 0.95, 0.25);
 flyers.add(makeFlyerStack(0.34, 0.48, 9, C.magenta));
@@ -361,9 +483,14 @@ scene.traverse((o) => {
   if (o.isMesh && o !== floor) { o.castShadow = true; o.receiveShadow = true; }
 });
 
-/* render nje kornize (pa loop) — Chrome e kap me screenshot */
+/* render direkt (pa kompozitor — EffectComposer s'punon me SwiftShader) */
+window.addEventListener('error', (e) => { try { document.title = 'JS_ERR: ' + (e.message || e.error || '?'); } catch (_) {} });
 window.addEventListener('load', () => {
-  renderer.render(scene, camera);
-  setTimeout(() => renderer.render(scene, camera), 350);
-  setTimeout(() => renderer.render(scene, camera), 1200);
+  try {
+    renderer.render(scene, camera);
+    document.title = 'RENDER_OK';
+    setTimeout(() => { renderer.render(scene, camera); }, 400);
+  } catch (e) {
+    try { document.title = 'RENDER_ERR: ' + e.message; } catch (_) {}
+  }
 });

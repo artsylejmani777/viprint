@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>FOLD TEST</title></head>
+<body style="background:#111;color:#eee;font:12px monospace">
+  <iframe id="g" src="game.html" style="width:600px;height:420px;border:0"></iframe>
+  <pre id="res" style="white-space:pre-wrap">...</pre>
+<script>
+  window.addEventListener('error', function (e) {
+    document.getElementById('res').textContent = 'JS_ERR: ' + (e.message || e.error) + ' @ ' + (e.filename || '') + ':' + (e.lineno || '');
+    document.title = 'FOLD_TEST_ERR';
+  });
+  function boot() {
+    var ifr = document.getElementById('g');
+    var W = ifr.contentWindow;
+    var log = [];
+    log.push('iframe ready=' + (ifr.contentDocument ? 'yes' : 'no'));
+    log.push('PM=' + (!!W.PM) + ' test=' + (W.PM && !!W.PM.test) + ' ready=' + ifr.contentDocument.readyState);
+    document.getElementById('res').textContent = log.join(' | ');
+    if (!W.PM || !W.PM.test) return setTimeout(boot, 150);
+    run(W);
+  }
+  function run(W) {
+    var PM = W.PM, doc = W.document, res = [];
+    PM.test.openOrder(3); // Paketime (kuti)
+    PM.test.start();
+    var solved = 0;
+    function next() {
+      var st = PM.test.state();
+      if (st.stage === 'fold') { doFold(); return; }
+      if (st.screen === 'report') { finish('REPORT: ' + (doc.querySelector('.rep__pct b') || {}).textContent); return; }
+      PM.test.solveStage();
+      solved++;
+      setTimeout(next, 260);
+    }
+    function doFold() {
+      res.push('FOLD start. client=' + ((doc.querySelector('.hud__client') || {}).textContent || '?'));
+      setTimeout(function () {
+        try {
+          var btns = doc.querySelectorAll('.seq');
+          res.push('.seq count=' + btns.length + ' screen=' + (doc.querySelector('.game') || {}).getAttribute('data-screen'));
+          if (btns.length < 3) { finish('FOLD_BTNS_MISSING: ' + res.join(' | ')); return; }
+          btns[0].click(); btns[1].click(); btns[2].click();
+          res.push('fold clicked, watching...');
+          watch();
+        } catch (e) { finish('FOLD_ERR: ' + e.message + ' | ' + res.join(' | ')); }
+      }, 350);
+    }
+    function watch() {
+      var t0 = Date.now();
+      var iv = setInterval(function () {
+        var pv = doc.querySelector('.pv');
+        var sheet = pv ? pv.querySelector('.sheet') : null;
+        var box3d = pv ? pv.querySelector('.box3d') : null;
+        if (!sheet || !box3d) return;
+        var sOp = getComputedStyle(sheet).opacity;
+        var bDisp = getComputedStyle(box3d).display;
+        var faceArt = doc.querySelector('.face .art');
+        var boxArt = doc.querySelector('.boxart');
+        var ft = faceArt ? (faceArt.innerText || '').replace(/\s+/g, ' ').slice(0, 16) : '-';
+        var bt = boxArt ? (boxArt.innerText || '').replace(/\s+/g, ' ').slice(0, 16) : '-';
+        var overlap = (parseFloat(sOp) > 0.05) && (bDisp === 'block');
+        res.push('+' + (Date.now() - t0) + 'ms sheet=' + sOp + ' box=' + bDisp +
+                 ' face="' + ft + '" boxart="' + bt + '"' + (overlap ? '  <<< OVERLAP!' : ''));
+        if (Date.now() - t0 > 2600) { clearInterval(iv); finish('DONE'); }
+      }, 90);
+    }
+    function finish(msg) {
+      document.getElementById('res').textContent = msg + '\n' + res.join('\n');
+      document.title = 'FOLD_TEST_DONE';
+    }
+    next();
+  }
+  boot();
+</script>
+</body>
+</html>

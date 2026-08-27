@@ -12,25 +12,65 @@ window.PM = window.PM || {};
 PM.START_MONEY = 20000;
 
 /* ---------------- KLIENTËT ----------------
-   Markat reale (logot zyrtare) + klientët fiktivë.
+   Marka reale (logot zyrtare nga Wikimedia Commons).
    prefers = cilat produkte porosisin zakonisht.
    Vlerat/kostot mbeten fiktive (simulim). */
 PM.CLIENTS = {
-  /* — Marka reale me logo — */
-  bk:   { name: 'Burger King',  logo: 'assets/brands/burger-king.png', accent: '#D62300', focus: 'Paketim ushqimi të shpejtë', prefers: ['box', 'bag', 'flyer', 'label', 'promo'] },
-  kfc:  { name: 'KFC',          logo: 'assets/brands/kfc.png',         accent: '#E4002B', focus: 'Paketim + fletushka',        prefers: ['box', 'bag', 'flyer', 'promo'] },
-  mcd:  { name: "McDonald's",   logo: 'assets/brands/mcdonalds.png',   accent: '#FFC72C', focus: 'Qese e paketim',             prefers: ['box', 'bag', 'flyer', 'label'] },
-  ph:   { name: 'Pizza Hut',    logo: 'assets/brands/pizzahut.png',    accent: '#EE3124', focus: 'Kuti pica + promovim',       prefers: ['box', 'flyer', 'promo', 'label'] },
-  sub:  { name: 'Subway',       logo: 'assets/brands/subway.png',      accent: '#008C15', focus: 'Fletushka + menu',           prefers: ['flyer', 'promo', 'box', 'bag'] },
-  /* — Klientët fiktivë — */
-  studio:    { name: 'Design Studio',     focus: 'Detaje të pastra',  prefers: ['card', 'promo'] },
-  cosmetics: { name: 'Luxury Cosmetics',  focus: 'Pamje premium',     prefers: ['box', 'label', 'promo'] },
-  fashion:   { name: 'Fashion Brand',     focus: 'Folie + teksturë',  prefers: ['box', 'bag', 'label'] },
-  resto:     { name: 'Restaurant',        focus: 'Shpejtësi',         prefers: ['flyer', 'box', 'bag', 'promo'] },
-  bakery:    { name: 'Bakery',            focus: 'Paketim',           prefers: ['box', 'bag', 'label'] },
-  corporate: { name: 'Corporate Client',  focus: 'Precizion',         prefers: ['card', 'promo', 'flyer'] },
-  publisher: { name: 'Publisher',         focus: 'Libra + lidhje',    prefers: ['promo', 'flyer'] },
-  vip:       { name: 'VIP Brand',         focus: 'Cilësi maksimale',  prefers: ['box', 'card', 'promo'] }
+  /* — Paketime (kuti ushqimi) — */
+  bk:   { name: 'Burger King',  logo: 'assets/brands/burger-king.png', accent: '#D62300', focus: 'Paketim ushqimi të shpejtë' },
+  kfc:  { name: 'KFC',          logo: 'assets/brands/kfc.png',         accent: '#E4002B', focus: 'Paketim + fletushka' },
+  mcd:  { name: "McDonald's",   logo: 'assets/brands/mcdonalds.png',   accent: '#FFC72C', focus: 'Qese e paketim' },
+  ph:   { name: 'Pizza Hut',    logo: 'assets/brands/pizzahut.png',    accent: '#EE3124', focus: 'Kuti pica + promovim' },
+  sub:  { name: 'Subway',       logo: 'assets/brands/subway.png',      accent: '#008C15', focus: 'Fletushka + menu' },
+  /* — Qese & Çanta (markete) — */
+  lidl:      { name: 'Lidl',        logo: 'assets/brands/lidl.png',      accent: '#0050AA', focus: 'Qese marketi' },
+  aldi:      { name: 'Aldi',        logo: 'assets/brands/aldi.png',      accent: '#0E5BB1', focus: 'Qese marketi' },
+  carrefour: { name: 'Carrefour',   logo: 'assets/brands/carrefour.png', accent: '#004E9F', focus: 'Hipermarket' },
+  kaufland:  { name: 'Kaufland',    logo: 'assets/brands/kaufland.png',  accent: '#E3000F', focus: 'Qese marketi' },
+  tesco:     { name: 'Tesco',       logo: 'assets/brands/tesco.png',     accent: '#EE1C2E', focus: 'Qese marketi' },
+  /* — Fletushka & Postera — */
+  ikea:      { name: 'IKEA',        logo: 'assets/brands/ikea.png',      accent: '#0058A3', focus: 'Katalogë + fletushka' },
+  hm:        { name: 'H&M',         logo: 'assets/brands/hm.png',        accent: '#D5002D', focus: 'Fletushka modë' },
+  mediamarkt:{ name: 'MediaMarkt',  logo: 'assets/brands/mediamarkt.png',accent: '#D20016', focus: 'Fletushka elektronikë' },
+  decathlon: { name: 'Decathlon',   logo: 'assets/brands/decathlon.png', accent: '#0082C3', focus: 'Postera sport' },
+  zara:      { name: 'Zara',        logo: 'assets/brands/zara.png',      accent: '#111111', focus: 'Fletushka modë' },
+  /* — Etiketa — */
+  cocacola:  { name: 'Coca-Cola',   logo: 'assets/brands/cocacola.png',  accent: '#F40009', focus: 'Etiketa pijesh' },
+  pepsi:     { name: 'Pepsi',       logo: 'assets/brands/pepsi.png',     accent: '#004B93', focus: 'Etiketa pijesh' },
+  heineken:  { name: 'Heineken',    logo: 'assets/brands/heineken.png',  accent: '#00A651', focus: 'Etiketa birre' },
+  loreal:    { name: "L'Oréal",     logo: 'assets/brands/loreal.png',    accent: '#003B71', focus: 'Etiketa kozmetike' },
+  nestle:    { name: 'Nestlé',      logo: 'assets/brands/nestle.png',    accent: '#0056A0', focus: 'Etiketa ushqimi' },
+  /* — Vizitkarta — */
+  google:    { name: 'Google',      logo: 'assets/brands/google.png',    accent: '#4285F4', focus: 'Vizitkarta kompanie' },
+  microsoft: { name: 'Microsoft',   logo: 'assets/brands/microsoft.png', accent: '#F25022', focus: 'Vizitkarta kompanie' },
+  deloitte:  { name: 'Deloitte',    logo: 'assets/brands/deloitte.png',  accent: '#14B3A5', focus: 'Vizitkarta profesionale' },
+  hsbc:      { name: 'HSBC',        logo: 'assets/brands/hsbc.png',      accent: '#DB0011', focus: 'Vizitkarta banke' },
+  amazon:    { name: 'Amazon',      logo: 'assets/brands/amazon.png',    accent: '#FF9900', focus: 'Vizitkarta kompanie' },
+  /* — Materiale Promocionale — */
+  redbull:   { name: 'Red Bull',    logo: 'assets/brands/redbull.png',   accent: '#DB0A40', focus: 'Promovime energjike' },
+  nike:      { name: 'Nike',        logo: 'assets/brands/nike.png',      accent: '#111111', focus: 'Promovime sport' },
+  adidas:    { name: 'Adidas',      logo: 'assets/brands/adidas.png',    accent: '#111111', focus: 'Promovime sport' },
+  puma:      { name: 'Puma',        logo: 'assets/brands/puma.png',      accent: '#111111', focus: 'Promovime sport' },
+  samsung:   { name: 'Samsung',     logo: 'assets/brands/samsung.png',   accent: '#1428A0', focus: 'Promovime elektronikë' },
+  /* — Klientët fiktivë (rezervë) — */
+  studio:    { name: 'Design Studio',     focus: 'Detaje të pastra' },
+  cosmetics: { name: 'Luxury Cosmetics',  focus: 'Pamje premium' },
+  fashion:   { name: 'Fashion Brand',     focus: 'Folie + teksturë' },
+  resto:     { name: 'Restaurant',        focus: 'Shpejtësi' },
+  bakery:    { name: 'Bakery',            focus: 'Paketim' },
+  corporate: { name: 'Corporate Client',  focus: 'Precizion' },
+  publisher: { name: 'Publisher',         focus: 'Libra + lidhje' },
+  vip:       { name: 'VIP Brand',         focus: 'Cilësi maksimale' }
+};
+
+/* 5 kompani (me logo) për çdo lloj produkti — fusha e tyre */
+PM.TYPE_CLIENTS = {
+  card:  ['google', 'microsoft', 'deloitte', 'hsbc', 'amazon'],
+  flyer: ['ikea', 'hm', 'mediamarkt', 'decathlon', 'zara'],
+  label: ['cocacola', 'pepsi', 'heineken', 'loreal', 'nestle'],
+  box:   ['bk', 'kfc', 'mcd', 'ph', 'sub'],
+  bag:   ['lidl', 'aldi', 'carrefour', 'kaufland', 'tesco'],
+  promo: ['redbull', 'nike', 'adidas', 'puma', 'samsung']
 };
 
 /* ---------------- MATERIALET ---------------- */
@@ -118,16 +158,12 @@ function pickN(arr, n) {
 function byId(list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; }
 PM._byId = byId;
 
-PM.makeOrder = function (typeId) {
+PM.makeOrder = function (typeId, clientId, materialId) {
   var t = byId(PM.PRODUCT_TYPES, typeId);
-  /* klientët që e porosisin zakonisht këtë produkt; ndryshe: cilido */
-  var keys = Object.keys(PM.CLIENTS);
-  var pool = keys.filter(function (k) {
-    return PM.CLIENTS[k].prefers && PM.CLIENTS[k].prefers.indexOf(t.id) !== -1;
-  });
-  if (!pool.length) pool = keys;
-  var client = pick(pool);
-  var material = pick(t.materials);
+  /* kompania: e dhënë, ose e rastësishme nga 5 të fushës së produktit */
+  var pool = PM.TYPE_CLIENTS[t.id] || Object.keys(PM.CLIENTS);
+  var client = clientId || pick(pool);
+  var material = materialId || pick(t.materials);
   var nFin = Math.random() < 0.5 ? 1 : 2;
   var finishes = pickN(t.finishes, Math.min(nFin, t.finishes.length));
   var mat = byId(PM.MATERIALS, material);

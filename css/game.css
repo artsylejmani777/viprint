@@ -1098,13 +1098,14 @@ img, svg { display: block; max-width: 100%; }
 .pv.is-printed .art__ink { opacity: 1; }
 
 /* ---------- FOLIA ---------- */
-.pv.has-foil .art__ink { opacity: 0; }
 .pv.has-foil .art__foil {
   display: block;
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
+/* vetëm NJË shtresë njëherësh — pa tekst të dyfishuar */
+.pv.has-foil .art__ink, .pv.has-foil .art__relief { display: none; }
 .pv[data-foil="gold"]   .art__foil { background-image: linear-gradient(115deg, #8F6B26, #F6E7B4 30%, #D9B45B 55%, #8F6B26); background-size: 200%; }
 .pv[data-foil="silver"] .art__foil { background-image: linear-gradient(115deg, #7A818E, #F4F6FA 30%, #C6CCD6 55%, #7A818E); }
 .pv[data-foil="color"]  .art__foil { background-image: linear-gradient(115deg, #7C0E56, #E259B2 40%, #C5037F 60%, #7C0E56); }
@@ -1116,7 +1117,7 @@ img, svg { display: block; max-width: 100%; }
   display: block;
   color: var(--ink);
 }
-.pv.has-relief .art__foil, .pv.has-relief .art__ink { opacity: 0; }
+.pv.has-relief .art__foil, .pv.has-relief .art__ink { display: none; }
 .pv[data-relief="up"] .art__relief { text-shadow: 0 1.5px 0 rgba(255,255,255,.5), 0 -1.5px 2px rgba(0,0,0,.7); }
 .pv[data-relief="down"] .art__relief { text-shadow: 0 -1.5px 0 rgba(255,255,255,.4), 0 1.5px 2px rgba(0,0,0,.7); }
 
@@ -1262,7 +1263,7 @@ img, svg { display: block; max-width: 100%; }
   display: none;
   transform-style: preserve-3d;
 }
-.pv[data-type="box"].is-folded .sheet { opacity: 0; }
+.pv[data-type="box"].is-folded .sheet { opacity: 0; visibility: hidden; }
 .pv[data-type="box"].is-folded .box3d { display: block; animation: boxAppear .9s var(--e); }
 @keyframes boxAppear { from { opacity: 0; transform: translateY(14px) scale(.9); } }
 
@@ -1355,7 +1356,7 @@ img, svg { display: block; max-width: 100%; }
   transform-style: preserve-3d;
 }
 .pv.is-bundled .flyerbundle { display: block; animation: bundleIn .9s var(--e); }
-.pv.is-bundled .sheet { opacity: 0; }
+.pv.is-bundled .sheet { opacity: 0; visibility: hidden; }
 .pv.is-bundled .box3d, .pv.is-bundled .bookblock { display: none; }
 
 @keyframes bundleIn {
@@ -1433,7 +1434,7 @@ img, svg { display: block; max-width: 100%; }
   transform-style: preserve-3d;
 }
 .pv[data-type="bag"].is-folded .paperbag { display: block; animation: boxAppear .8s var(--e); }
-.pv[data-type="bag"].is-folded .sheet { opacity: 0; }
+.pv[data-type="bag"].is-folded .sheet { opacity: 0; visibility: hidden; }
 
 .paperbag__body {
   position: absolute; left: 50%; top: 34%; bottom: 14%;

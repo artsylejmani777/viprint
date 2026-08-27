@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="sq">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ViPrint Studio — Produkte Printimi</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; background: #f6f4f0; }
+      #c { position: fixed; inset: 0; display: block; }
+      /* vinjeta e butë e studios */
+      #vignette {
+        position: fixed; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 55%, rgba(30,20,15,0.16) 100%);
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/vendor/three.module.js",
+          "three/addons/": "/vendor/addons/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div id="vignette"></div>
+    <script type="module" src="./studio.js"></script>
+  </body>
+</html>

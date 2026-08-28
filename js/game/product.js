@@ -204,23 +204,24 @@
       }
 
       var isCard = lvl.type === 'card';
-      var isLabel = lvl.type === 'label';
       var hasLogo = !!(cl && cl.logo);
-      /* emri në produkt: vetëm NJË HERË — kur ka logo, logoja e tregon emrin, s'përsëritet si tekst */
-      var nameTxt = isCard ? (hasLogo ? '' : cl.name) : (lvl.product || '').replace(/^[\d.\s]+/, '');
+      /* teksti në produkt: EMRI I KLIENTIT + SASIA (p.sh. "KFC 500") — jo emri i produktit ("Kuti") */
+      var qty = (lvl.product || '').match(/^[\d.\s]+/);
+      var nameTxt = isCard
+        ? (hasLogo ? '' : cl.name)
+        : (cl.name + (qty ? ' ' + qty[0].trim() : ''));
 
-      /* përmbajtja e rreshtit të poshtëm — sipas llojit */
+      /* rreshti i poshtëm: vetëm vizitkarta mban kontaktet;
+         llojet gloss/matte/soft etj. hiqen nga të gjitha produktet */
       var small;
       if (isCard) {
         small = '<span class="st">Tel +383 48 350 159</span>' +
                 '<span class="st">info@vi-print.com · Mitrovicë, Kosovë</span>';
-      } else if (isLabel) {
-        small = '<span class="st">' + U.esc(lvl.style || '') + '</span>';
       } else {
-        small = '<span class="st">' + U.esc(lvl.style || '') + ' · VI-PRINT</span>';
+        small = '';   /* asgjë tjetër — vetëm logo + emri i klientit + sasia */
       }
 
-      var smallTop = isCard ? 72 : 70;
+      var smallTop = 72;
 
       /* chip i veçantë për logon reale (gjithmonë i dukshëm, jashtë shtresave ink/foil) */
       function logoChip(inner) {
@@ -234,11 +235,11 @@
           ? '<img class="art__logo" src="' + cl.logo + '" alt="">'
           : '<span class="mark"><b>VI</b><em>' + U.esc(cl.name.split(' ')[0].toUpperCase()) + '</em></span>') +
         (nameTxt ? chip('name', '<span class="nm">' + U.esc(nameTxt) + '</span>') : '') +
-        '<span class="art__it art__it--smalltext is-placed" style="left:50%;top:' + smallTop + '%">' +
+        (small ? '<span class="art__it art__it--smalltext is-placed" style="left:50%;top:' + smallTop + '%">' +
           '<span class="art__ink">' + small + '</span>' +
           '<span class="art__foil">' + small + '</span>' +
           '<span class="art__relief"><span class="st">' + U.esc(lvl.style || '') + '</span></span>' +
-        '</span>';
+        '</span>' : '');
     },
 
     /** Faqja e përparme e kutisë 3D pasqyron fletën e shtypur */

@@ -317,31 +317,42 @@
      5 — PALOSJA (kuti / fletushkë / qese)
      ============================================================ */
   S.fold = {
+    /* sa palosje ka nevojë produkti */
+    count: function (type) {
+      if (type === 'box') return 4;   // 4 kapakët e kutisë
+      if (type === 'bag') return 3;   // fundi + anët e qeses
+      return 2;                        // fletushka bi-fold
+    },
     build: function (panel, ctx) {
       var body = head(panel, 'fold');
-      var seq = ['PALOS', 'SHTYP', 'KYÇ'];
+      var total = this.count(ctx.level.type);
+      var step = 0;
       body.appendChild(U.el('p', 'pan__note',
-        'Ndiq radhën: <b>' + seq.join(' → ') + '</b>'));
-      var row = U.el('div', 'seqrow');
-      row.innerHTML = seq.map(function (s, i) {
-        return '<button class="seq" type="button" data-i="' + i + '"' + (i ? ' disabled' : '') + '>' +
-                 '<span class="seq__n">' + (i + 1) + '</span><span class="seq__l">' + s + '</span></button>';
-      }).join('');
-      body.appendChild(row);
+        'Palosje hap pas hapi — shtyp <b>PALOS DHE KYÇ</b> për çdo palosje (' + total + ' gjithsej).'));
+      var counter = U.el('div', 'foldcount', '<b>0</b><span> / ' + total + '</span>');
+      var bar = U.el('div', 'foldbar', '<i></i>');
+      var btn = U.el('button', 'gbtn gbtn--gold foldbtn', 'PALOS DHE KYÇ 1');
+      body.appendChild(counter);
+      body.appendChild(bar);
+      body.appendChild(btn);
 
-      var self = this, step = 0;
-      var btns = U.qa('.seq', row);
-      btns.forEach(function (b, i) {
-        b.addEventListener('click', function () {
-          if (i !== step) return;
-          b.classList.add('is-done'); b.disabled = true;
-          PM.Product.foldStep(i + 1);
-          step++;
-          if (step < btns.length) btns[step].disabled = false;
-          else self.finish(ctx);
-        });
+      var self = this;
+      btn.addEventListener('click', function () {
+        if (btn.disabled) return;
+        step++;
+        PM.Product.foldStep(step);              // palos hapin e radhës dhe e kyç
+        PM.sfx('click');
+        counter.querySelector('b').textContent = step;
+        bar.querySelector('i').style.width = Math.round(step / total * 100) + '%';
+        if (step >= total) {
+          btn.disabled = true;
+          btn.textContent = '✓ U PALOS';
+          self.finish(ctx);
+        } else {
+          btn.textContent = 'PALOS DHE KYÇ ' + (step + 1);
+        }
       });
-      this._btns = btns; this._ctx = ctx;
+      this._btn = btn; this._ctx = ctx;
     },
     finish: function (ctx) {
       ctx.m.fold = 100;
@@ -351,7 +362,10 @@
       else if (v === 'bag') PM.Product.assembleBag(done);
       else PM.Product.assembleFlyer(done);
     },
-    autoSolve: function () { var b = this._btns; for (var i = 0; i < b.length; i++) b[i].click(); }
+    autoSolve: function () {
+      var total = this.count(this._ctx.level.type);
+      for (var i = 0; i < total; i++) this._btn.click();
+    }
   };
 
   /* ============================================================

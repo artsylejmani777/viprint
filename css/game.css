@@ -1513,3 +1513,22 @@ img, svg { display: block; max-width: 100%; }
 
 /* ---------- Fitimi gjithmonë pozitiv ---------- */
 .eco--tot b.eco--pos { color: #7FD98A; }
+
+/* Logoja e markës në kuti/qese/tufë: përshtatet brenda faqes — del në mes, pa u prerë anash */
+.boxart .art__it--logo .art__logo,
+.bagart .art__it--logo .art__logo,
+.fb__topart .art__it--logo .art__logo {
+  max-width: 92%;
+  height: 2.6em;
+}
+
+/* ---------- Palosja hap pas hapi ---------- */
+.foldcount { display: flex; align-items: baseline; justify-content: center; gap: .15rem; font-family: var(--font-mono); font-size: 2.2rem; color: var(--gold-hi); margin: .4rem 0 .3rem; }
+.foldcount span { font-size: 1rem; color: var(--text-mut); }
+.foldbar { height: 6px; border-radius: 4px; background: var(--panel-2); overflow: hidden; margin: 0 0 1.1rem; }
+.foldbar i { display: block; height: 100%; width: 0; border-radius: 4px; background: linear-gradient(90deg, var(--gold-lo), var(--gold)); transition: width .18s var(--e); }
+.foldbtn { width: 100%; }
+
+/* Logoja në kuti/qese: më në MES të faqes (vertikalisht), jo lart anash */
+.boxart .art__it--logo { top: 42% !important; }
+.bagart .art__it--logo { top: 40% !important; }

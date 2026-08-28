@@ -1001,6 +1001,17 @@ img, svg { display: block; max-width: 100%; }
 .pv[data-type="label"] .sheet { width: 44%; aspect-ratio: 1 / 1; }
 .pv[data-type="label"] .face { border-radius: 18px; }
 .pv[data-type="label"] .sheet__flap { display: none; }
+/* etiketa: logoja gjithmonë në mes të faqes (chip me gjerësi të prerë + img e qendruar) */
+.pv[data-type="label"] .art__it--logo {
+  width: 80%;
+  top: 40% !important;
+}
+.pv[data-type="label"] .art__it--logo .art__logo {
+  max-width: 100%;
+  height: auto;
+  max-height: 4em;
+  margin: 0 auto;
+}
 .pv[data-type="promo"] .sheet { width: 58%; aspect-ratio: 1.414 / 1; }   /* landscape */
 .pv[data-type="promo"] .sheet__flap { display: none; }
 .pv[data-type="bag"] .sheet { width: 46%; aspect-ratio: 0.82 / 1; }

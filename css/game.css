@@ -1532,3 +1532,11 @@ img, svg { display: block; max-width: 100%; }
 /* Logoja në kuti/qese: më në MES të faqes (vertikalisht), jo lart anash */
 .boxart .art__it--logo { top: 42% !important; }
 .bagart .art__it--logo { top: 40% !important; }
+
+/* Zgjedhësi i logove: të 5 logot të qendruara NË MES (një rresht, jo anash) */
+.pick-logos {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch;
+  gap: .45rem; margin: 0 0 1.2rem;
+}
+.pick-logo { width: 90px; flex: 0 0 auto; padding: .7rem .4rem; }
+.pick-logo__img .clogo { max-width: 84px; }

@@ -324,7 +324,7 @@
           '<div class="eco eco--sub"><span>Material + makineri</span><b>−' + U.money(eco.material + eco.machine) + '</b></div>' +
           '<div class="eco eco--sub"><span>Finishime</span><b>−' + U.money(eco.extras) + '</b></div>' +
           '<div class="eco eco--sub"><span>Mbeturina</span><b>−' + U.money(eco.waste) + '</b></div>' +
-          '<div class="eco eco--tot"><span>FITIMI</span><b>' + U.money(eco.profit) + '</b></div>' +
+          '<div class="eco eco--tot"><span>FITIMI</span><b class="eco--pos">+' + U.money(eco.profit) + '</b></div>' +
         '</div>' +
         '<div class="rep__cert">' +
           '<span class="rep__ok">' + (pct >= 60 ? 'KLIENTI APROVOI ✓' : 'KLIENTI REFUZOI ✕') + '</span>' +
@@ -428,7 +428,11 @@
       },
       autoPlay: function (typeIdx, cb) {
         var seen = [];
-        openOrder(typeIdx); startOrder();
+        var t = PM.PRODUCT_TYPES[typeIdx];
+        G.order = PM.makeOrder(t.id);      // porosi e rastësishme për test
+        G.level = G.order;
+        G.stages = G.order.pipeline.slice();
+        startOrder();
         var guard = 0, lastStage = null;
         (function step() {
           if (++guard > 240) { cb({ error: 'guard', seen: seen }); return; }

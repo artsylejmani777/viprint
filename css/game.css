@@ -1510,3 +1510,6 @@ img, svg { display: block; max-width: 100%; }
 .pick-logo__img b { font-size: 1.5rem; }
 .pick-logo__n { font-weight: 700; font-size: .8rem; color: var(--text); }
 .pick-logo small { color: var(--text-dim); font-size: .66rem; line-height: 1.3; }
+
+/* ---------- Fitimi gjithmonë pozitiv ---------- */
+.eco--tot b.eco--pos { color: #7FD98A; }

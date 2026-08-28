@@ -302,7 +302,7 @@
     var revenue = lvl.value * (PM.has('capacity') ? 1.12 : 1);
 
     var materialCost = (p.material ? U.byId(PM.MATERIALS, p.material).cost : 200);
-    var machineCost = G.stages.length * 95;
+    var machineCost = G.stages.length * 40;               // 40€/fazë (më parë 95)
     var effectsCost = 0;
     p.effects.forEach(function (id) {
       var e = U.byId(PM.EFFECTS, id); if (e) effectsCost += e.cost;
@@ -311,10 +311,20 @@
     p.inserts.forEach(function (id) {
       var i = U.byId(PM.INSERTS, id); if (i) effectsCost += i.cost;
     });
-    var shipCost = p.shipping ? U.byId(PM.SHIPPING, p.shipping).cost : 120;
-    var wasteCost = revenue * (m.waste / 100) * 0.55;
+    var shipCost = p.shipping ? U.byId(PM.SHIPPING, p.shipping).cost : 70;   // më parë 120
+    var wasteCost = revenue * (m.waste / 100) * 0.35;                        // më parë 0.55
 
     var cost = materialCost + machineCost + effectsCost + shipCost + wasteCost;
+
+    /* FITIMI GJITHMONË POZITIV: kostot nuk kalojnë kurrë 85% të vlerës së porosisë.
+       Nëse kalojnë, komponentët zvogëlohen proporcionalisht (raporti mbetet i saktë). */
+    var maxCost = revenue * 0.85;
+    if (cost > maxCost) {
+      var s = maxCost / cost;
+      materialCost *= s; machineCost *= s; effectsCost *= s; shipCost *= s; wasteCost *= s;
+      cost = maxCost;
+    }
+
     return {
       revenue: revenue,
       material: materialCost,
@@ -323,7 +333,7 @@
       shipping: shipCost,
       waste: wasteCost,
       cost: cost,
-      profit: revenue - cost
+      profit: revenue - cost   // gjithmonë ≥ 15% e vlerës → pozitiv
     };
   };
 

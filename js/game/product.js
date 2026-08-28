@@ -205,11 +205,11 @@
 
       var isCard = lvl.type === 'card';
       var hasLogo = !!(cl && cl.logo);
-      /* teksti në produkt: EMRI I KLIENTIT + SASIA (p.sh. "KFC 500") — jo emri i produktit ("Kuti") */
+      /* teksti në produkt: vetëm SASIA (p.sh. "1.000") — emri i klientit del VETËM NJË HERË, në logo */
       var qty = (lvl.product || '').match(/^[\d.\s]+/);
       var nameTxt = isCard
         ? (hasLogo ? '' : cl.name)
-        : (cl.name + (qty ? ' ' + qty[0].trim() : ''));
+        : (qty ? qty[0].trim() : '');
 
       /* rreshti i poshtëm: vetëm vizitkarta mban kontaktet;
          llojet gloss/matte/soft etj. hiqen nga të gjitha produktet */

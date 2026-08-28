@@ -301,7 +301,7 @@
         '<div class="rep__hd">' +
           '<span class="rep__kicker">RAPORTI I PRODHIMIT</span>' +
           '<h2 class="rep__grade">' + grade + '</h2>' +
-          '<p class="rep__sub">' + U.esc(PM.CLIENTS[lvl.client].name) + ' — ' + U.esc(lvl.product) + '</p>' +
+          '<p class="rep__sub">' + U.esc(lvl.product) + '</p>' +
           '<div class="rep__stars">' + '★'.repeat(stars) + '<span>' + '★'.repeat(5 - stars) + '</span></div>' +
           '<div class="rep__pct"><b>' + pct + '%</b><i>' + grade + '</i></div>' +
         '</div>' +

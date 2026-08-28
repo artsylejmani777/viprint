@@ -182,6 +182,14 @@
       this.renderBoxFace();
       this.renderBundleTop();
       this.renderBagBody();
+
+      /* emri i kompanisë del VETËM NJË HERË — në produktin final (pasqyrë);
+         hiqet nga fleta për kuti/qese/fletushkë (fleta mbetet vetëm me logo) */
+      if (lvl.type === 'box' || lvl.type === 'bag' || lvl.type === 'flyer') {
+        var fa = U.q('.face .art', host);
+        var nmEl = fa ? fa.querySelector('.art__it--name') : null;
+        if (nmEl) nmEl.parentNode.removeChild(nmEl);
+      }
     },
 
     /* ---------------- Elementet e dizajnit ---------------- */

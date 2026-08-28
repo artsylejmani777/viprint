@@ -1147,7 +1147,7 @@ img, svg { display: block; max-width: 100%; }
 /* logo e klientit në HUD */
 .hud__client { display: inline-flex; align-items: center; gap: .5rem; }
 .hud__client .hud-logo { height: 1.7rem; width: auto; object-fit: contain; }
-.art__it--name .nm { font-weight: 800; letter-spacing: .05em; font-size: 1.15em; text-align: center; white-space: nowrap; }
+.art__it--name .nm { font-weight: 700; letter-spacing: .14em; font-size: .92em; text-align: center; white-space: nowrap; text-transform: uppercase; }
 .art__it--smalltext { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .art__it--smalltext .st { font-size: .62em; letter-spacing: .06em; white-space: nowrap; }
 

@@ -205,11 +205,10 @@
 
       var isCard = lvl.type === 'card';
       var hasLogo = !!(cl && cl.logo);
-      /* teksti në produkt: vetëm SASIA (p.sh. "1.000") — emri i klientit del VETËM NJË HERË, në logo */
-      var qty = (lvl.product || '').match(/^[\d.\s]+/);
-      var nameTxt = isCard
-        ? (hasLogo ? '' : cl.name)
-        : (qty ? qty[0].trim() : '');
+      /* teksti në produkt: EMRI I KOMPANISË në POSHTË — pa numra, pa përsëritje */
+      var nameTxt = isCard ? (hasLogo ? '' : cl.name) : cl.name;
+      /* emri pozicionohet në fund të produktit (poshtë logos) */
+      pos.name = { x: 50, y: isCard ? 55 : 76 };
 
       /* rreshti i poshtëm: vetëm vizitkarta mban kontaktet;
          llojet gloss/matte/soft etj. hiqen nga të gjitha produktet */

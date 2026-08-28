@@ -84,48 +84,125 @@
   }
 
   /* ============================================================
-     POROSIA
+     POROSIA — rrjedha e re: zgjidh NGJYRËN → pastaj 1 nga 5 LOGOT
      ============================================================ */
   function openOrder(typeIdx) {
     var t = PM.PRODUCT_TYPES[typeIdx];
-    G.order = PM.makeOrder(t.id);
-    G.level = G.order;
-    G.stages = G.order.pipeline.slice();
-
-    var cl = PM.CLIENTS[G.order.client];
-    var mat = PM._byId(PM.MATERIALS, G.order.material);
-    var fins = G.order.finishes.map(function (id) { return PM._byId(PM.FINISH_OPTIONS, id).label; }).join(' + ');
-
-    els.order.innerHTML =
-      '<div class="ocard" style="--c:var(--gold)">' +
-        '<div class="ocard__stamp">VI-PRINT</div>' +
-        '<div class="ocard__hd">' +
-          '<span class="ocard__kicker">POROSI E RE KLIENTI</span>' +
-          '<span class="ocard__id">' + t.icon + ' ' + U.esc(t.label) + '</span>' +
-        '</div>' +
-        '<dl class="ocard__rows">' +
-          '<div class="orow"><dt>KLIENTI</dt><dd class="orow__client">' + (cl.logo ? '<img class="clogo" src="' + cl.logo + '" alt="">' : '') + '<span>' + U.esc(cl.name) + '</span></dd></div>' +
-          row('PRODUKTI', G.order.product) +
-          row('MATERIALI', mat.label) +
-          row('FINISHIMI', fins || 'Pa finishim') +
-          row('AFATI', G.order.deadline + ' sekonda') +
-        '</dl>' +
-        '<div class="ocard__val"><span>VLERA E POROSISË</span><b>' + U.money(G.order.value) + '</b></div>' +
-        '<p class="ocard__focus">Prioriteti: <b>' + U.esc(cl.focus) + '</b></p>' +
-        '<div class="ocard__cta">' +
-          '<button class="gbtn gbtn--ghost" type="button" data-back>KTHEHU</button>' +
-          '<button class="gbtn gbtn--gold" type="button" data-accept>PRANO POROSINË</button>' +
-        '</div>' +
-        '<p class="ocard__fine">Simulim prodhimi — vlerat dhe kostot janë fiktive.</p>' +
-      '</div>';
-
-    U.q('[data-back]', els.order).addEventListener('click', function () { show('menu'); });
-    U.q('[data-accept]', els.order).addEventListener('click', startOrder);
-    show('order');
+    var chosenMat = null;
+    var pool = PM.TYPE_CLIENTS[t.id] || Object.keys(PM.CLIENTS);
 
     function row(k, v) {
       return '<div class="orow"><dt>' + k + '</dt><dd>' + U.esc(v) + '</dd></div>';
     }
+
+    /* Hapi 1 — ngjyra / materiali */
+    function stepMaterial() {
+      els.order.innerHTML =
+        '<div class="ocard" style="--c:var(--gold)">' +
+          '<div class="ocard__stamp">VI-PRINT</div>' +
+          '<div class="ocard__hd">' +
+            '<span class="ocard__kicker">HAPI 1 · ZGJIDH NGJYRËN</span>' +
+            '<span class="ocard__id">' + t.icon + ' ' + U.esc(t.label) + ' — ' + U.esc(t.product) + '</span>' +
+          '</div>' +
+          '<div class="pick-grid">' +
+            t.materials.map(function (mid) {
+              var m = PM._byId(PM.MATERIALS, mid);
+              return '<button class="pick-swatch" type="button" data-mat="' + m.id + '" style="--sw:' + m.base + '">' +
+                '<i class="pick-dot"></i>' +
+                '<span class="pick-swatch__n">' + U.esc(m.label) + '</span>' +
+                '<small>' + U.esc(m.spec) + '</small>' +
+              '</button>';
+            }).join('') +
+          '</div>' +
+          '<div class="ocard__cta">' +
+            '<button class="gbtn gbtn--ghost" type="button" data-back>KTHEHU</button>' +
+          '</div>' +
+          '<p class="ocard__fine">Zgjidh ngjyrën e materialit — më pas do të shfaqen 5 kompani që e porosisin.</p>' +
+        '</div>';
+      U.q('[data-back]', els.order).addEventListener('click', function () { show('menu'); });
+      U.qa('[data-mat]', els.order).forEach(function (b) {
+        b.addEventListener('click', function () {
+          chosenMat = b.dataset.mat;
+          stepClient();
+        });
+      });
+      show('order');
+    }
+
+    /* Hapi 2 — 5 logot e kompanive të fushës */
+    function stepClient() {
+      els.order.innerHTML =
+        '<div class="ocard" style="--c:var(--gold)">' +
+          '<div class="ocard__stamp">VI-PRINT</div>' +
+          '<div class="ocard__hd">' +
+            '<span class="ocard__kicker">HAPI 2 · ZGJIDH KOMPANINË</span>' +
+            '<span class="ocard__id">' + t.icon + ' ' + U.esc(t.label) + ' — ' + U.esc(PM._byId(PM.MATERIALS, chosenMat).label) + '</span>' +
+          '</div>' +
+          '<div class="pick-logos">' +
+            pool.map(function (cid) {
+              var cl = PM.CLIENTS[cid];
+              return '<button class="pick-logo" type="button" data-client="' + cid + '">' +
+                '<span class="pick-logo__img">' +
+                  (cl.logo ? '<img class="clogo" src="' + cl.logo + '" alt="" loading="lazy">' : '<b style="color:' + (cl.accent || 'var(--gold)') + '">' + U.esc(cl.name.charAt(0)) + '</b>') +
+                '</span>' +
+                '<span class="pick-logo__n">' + U.esc(cl.name) + '</span>' +
+                '<small>' + U.esc(cl.focus) + '</small>' +
+              '</button>';
+            }).join('') +
+          '</div>' +
+          '<div class="ocard__cta">' +
+            '<button class="gbtn gbtn--ghost" type="button" data-back>← NDRYSHO NGJYRËN</button>' +
+          '</div>' +
+          '<p class="ocard__fine">Zgjidh kompaninë që e porosit — 5 të fushës së ' + U.esc(t.label.toLowerCase()) + '.</p>' +
+        '</div>';
+      U.q('[data-back]', els.order).addEventListener('click', stepMaterial);
+      U.qa('[data-client]', els.order).forEach(function (b) {
+        b.addEventListener('click', function () {
+          showCard(b.dataset.client);
+        });
+      });
+      show('order');
+    }
+
+    /* Hapi 3 — karta e porosisë (me kompaninë dhe ngjyrën e zgjedhura) */
+    function showCard(clientId) {
+      G.order = PM.makeOrder(t.id, clientId, chosenMat);
+      G.level = G.order;
+      G.stages = G.order.pipeline.slice();
+
+      var cl = PM.CLIENTS[G.order.client];
+      var mat = PM._byId(PM.MATERIALS, G.order.material);
+      var fins = G.order.finishes.map(function (id) { return PM._byId(PM.FINISH_OPTIONS, id).label; }).join(' + ');
+
+      els.order.innerHTML =
+        '<div class="ocard" style="--c:var(--gold)">' +
+          '<div class="ocard__stamp">VI-PRINT</div>' +
+          '<div class="ocard__hd">' +
+            '<span class="ocard__kicker">POROSI E RE KLIENTI</span>' +
+            '<span class="ocard__id">' + t.icon + ' ' + U.esc(t.label) + '</span>' +
+          '</div>' +
+          '<dl class="ocard__rows">' +
+            '<div class="orow"><dt>KLIENTI</dt><dd class="orow__client">' + (cl.logo ? '<img class="clogo" src="' + cl.logo + '" alt="">' : '') + '<span>' + U.esc(cl.name) + '</span></dd></div>' +
+            row('PRODUKTI', G.order.product) +
+            row('MATERIALI', mat.label) +
+            row('FINISHIMI', fins || 'Pa finishim') +
+            row('AFATI', G.order.deadline + ' sekonda') +
+          '</dl>' +
+          '<div class="ocard__val"><span>VLERA E POROSISË</span><b>' + U.money(G.order.value) + '</b></div>' +
+          '<p class="ocard__focus">Prioriteti: <b>' + U.esc(cl.focus) + '</b></p>' +
+          '<div class="ocard__cta">' +
+            '<button class="gbtn gbtn--ghost" type="button" data-back>KTHEHU</button>' +
+            '<button class="gbtn gbtn--gold" type="button" data-accept>PRANO POROSINË</button>' +
+          '</div>' +
+          '<p class="ocard__fine">Simulim prodhimi — vlerat dhe kostot janë fiktive.</p>' +
+        '</div>';
+
+      U.q('[data-back]', els.order).addEventListener('click', stepClient);
+      U.q('[data-accept]', els.order).addEventListener('click', startOrder);
+      show('order');
+    }
+
+    stepMaterial();
   }
 
   /* ============================================================

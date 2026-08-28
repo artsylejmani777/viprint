@@ -205,7 +205,9 @@
 
       var isCard = lvl.type === 'card';
       var isLabel = lvl.type === 'label';
-      var nameTxt = isCard ? cl.name : (lvl.product || '').replace(/^[\d.\s]+/, '');
+      var hasLogo = !!(cl && cl.logo);
+      /* emri në produkt: vetëm NJË HERË — kur ka logo, logoja e tregon emrin, s'përsëritet si tekst */
+      var nameTxt = isCard ? (hasLogo ? '' : cl.name) : (lvl.product || '').replace(/^[\d.\s]+/, '');
 
       /* përmbajtja e rreshtit të poshtëm — sipas llojit */
       var small;
@@ -231,7 +233,7 @@
         logoChip(cl.logo
           ? '<img class="art__logo" src="' + cl.logo + '" alt="">'
           : '<span class="mark"><b>VI</b><em>' + U.esc(cl.name.split(' ')[0].toUpperCase()) + '</em></span>') +
-        chip('name', '<span class="nm">' + U.esc(nameTxt) + '</span>') +
+        (nameTxt ? chip('name', '<span class="nm">' + U.esc(nameTxt) + '</span>') : '') +
         '<span class="art__it art__it--smalltext is-placed" style="left:50%;top:' + smallTop + '%">' +
           '<span class="art__ink">' + small + '</span>' +
           '<span class="art__foil">' + small + '</span>' +
